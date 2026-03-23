@@ -1,0 +1,25 @@
+{
+  "name": "code-invaders",
+  "version": "1.0.0",
+  "description": "A retro arcade game for learning secure coding patterns",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "serve": "npx http-server -p 8000 -o",
+    "dev": "tsc && npx http-server -p 8000 -o",
+    "deploy-prep": "./deploy-prep.sh",
+    "deploy-netlify": "npm run build && echo 'Now drag the folder to netlify.com!'"
+  },
+  "keywords": [
+    "game",
+    "security",
+    "education",
+    "arcade",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

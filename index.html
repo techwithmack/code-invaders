@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Invaders - Secure Coding Training Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CODE INVADERS</h1>
+            <p class="subtitle">Defend Against Vulnerable Code!</p>
+        </header>
+        
+        <div class="game-wrapper">
+            <div class="hud">
+                <div class="hud-item">
+                    <span class="hud-label">SCORE:</span>
+                    <span id="score" class="hud-value">0</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">LEVEL:</span>
+                    <span id="level" class="hud-value">1</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">STREAK:</span>
+                    <span id="streak" class="hud-value">0</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">ACCURACY:</span>
+                    <span id="accuracy" class="hud-value">--%</span>
+                </div>
+            </div>
+            
+            <canvas id="gameCanvas"></canvas>
+            
+            <div class="stats">
+                <div class="stat-item secure">
+                    <span class="stat-icon">✓</span>
+                    <span class="stat-label">Secure Avoided:</span>
+                    <span id="secure-hits" class="stat-value">0</span>
+                </div>
+                <div class="stat-item insecure">
+                    <span class="stat-icon">⚠</span>
+                    <span class="stat-label">Insecure Destroyed:</span>
+                    <span id="insecure-hits" class="stat-value">0</span>
+                </div>
+                <div class="stat-item malware">
+                    <span class="stat-icon">☠</span>
+                    <span class="stat-label">Malware Destroyed:</span>
+                    <span id="malware-hits" class="stat-value">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <span class="key">← →</span> or <span class="key">A D</span> Move
+            </div>
+            <div class="control-group">
+                <span class="key">SPACE</span> Shoot
+            </div>
+            <div class="control-group">
+                <span class="key">P</span> Pause
+            </div>
+            <div class="control-group">
+                <span class="key">R</span> Restart
+            </div>
+        </div>
+        
+        <div id="gameOverlay" class="overlay hidden">
+            <div class="overlay-content">
+                <h2 id="overlayTitle">GAME PAUSED</h2>
+                <p id="overlayMessage">Press P to continue</p>
+                <div id="finalStats" class="final-stats"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="dist/main.js"></script>
+</body>
+</html>

