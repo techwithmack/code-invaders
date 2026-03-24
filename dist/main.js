@@ -104,20 +104,22 @@ let lanePositions = [];
 function loadSnippets() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // Try loading the new trend pack first
-            const response = yield fetch('code-invaders-trend-pack.json');
+            // Load the new annotated trend pack with rich metadata
+            const response = yield fetch('code-invaders-trend-pack-annotated.json');
             if (!response.ok) {
-                throw new Error('Failed to load code-invaders-trend-pack.json');
+                throw new Error('Failed to load code-invaders-trend-pack-annotated.json');
             }
             const trendPack = yield response.json();
-            // Extract snippets with language info from the trend pack format
+            // Extract snippets with language info and full data from the annotated format
             SNIPPETS.insecure = trendPack.insecure.map(item => ({
                 snippet: item.snippet,
-                language: item.language
+                language: item.language,
+                snippetData: item
             }));
             SNIPPETS.malware = trendPack.malware.map(item => ({
                 snippet: item.snippet,
-                language: item.language
+                language: item.language,
+                snippetData: item
             }));
             // Add secure code examples (not in trend pack, so we define them here)
             SNIPPETS.secure = [
@@ -134,7 +136,7 @@ function loadSnippets() {
                 { snippet: 'const escaped = escapeHtml(userInput)', language: 'JavaScript' },
                 { snippet: 'crypto.randomBytes(32).toString("hex")', language: 'JavaScript' },
             ];
-            console.log('✓ Loaded Code Invaders Trend Pack:', {
+            console.log('✓ Loaded Code Invaders Annotated Trend Pack:', {
                 secure: SNIPPETS.secure.length,
                 insecure: SNIPPETS.insecure.length,
                 malware: SNIPPETS.malware.length,
@@ -142,6 +144,7 @@ function loadSnippets() {
             });
             console.log('  Pack:', trendPack.meta.name);
             console.log('  Generated:', trendPack.meta.generated_on);
+            console.log('  Using annotated version with vuln_key, analysis, and line_notes!');
         }
         catch (error) {
             console.error('Error loading trend pack:', error);
@@ -150,7 +153,13 @@ function loadSnippets() {
             try {
                 const fallbackResponse = yield fetch('snippets.json');
                 if (fallbackResponse.ok) {
-                    SNIPPETS = yield fallbackResponse.json();
+                    const fallbackData = yield fallbackResponse.json();
+                    // Convert old string array format to new object format
+                    SNIPPETS = {
+                        secure: (fallbackData.secure || []).map((s) => ({ snippet: s, language: 'Mixed' })),
+                        insecure: (fallbackData.insecure || []).map((s) => ({ snippet: s, language: 'Mixed' })),
+                        malware: (fallbackData.malware || []).map((s) => ({ snippet: s, language: 'Mixed' })),
+                    };
                     console.log('✓ Loaded fallback snippets.json');
                 }
                 else {
@@ -161,9 +170,9 @@ function loadSnippets() {
                 console.error('Fallback failed, using minimal snippets');
                 // Use minimal snippets as last resort
                 SNIPPETS = {
-                    secure: ['PreparedStatement ps = conn.prepareStatement(?)'],
-                    insecure: ['query = "SELECT * FROM users WHERE id=" + userId'],
-                    malware: ['eval(atob("dmFyIGE9ZG9jdW1lbnQuY29va2ll"))'],
+                    secure: [{ snippet: 'PreparedStatement ps = conn.prepareStatement(?)', language: 'Java' }],
+                    insecure: [{ snippet: 'query = "SELECT * FROM users WHERE id=" + userId', language: 'JavaScript' }],
+                    malware: [{ snippet: 'eval(atob("dmFyIGE9ZG9jdW1lbnQuY29va2ll"))', language: 'JavaScript' }],
                 };
             }
         }
@@ -230,6 +239,7 @@ function resetGame() {
         laneCooldowns: new Array(CONFIG.lanes.count).fill(0),
         screenShake: 0,
         flashEffect: null,
+        mistakes: [],
     };
     updateHUD();
     hideOverlay();
@@ -242,6 +252,10 @@ function setupEventListeners() {
         }
         else if (e.key.toLowerCase() === 'r' && state.status === GameStatus.GameOver) {
             resetGame();
+        }
+        else if (e.key.toLowerCase() === 'e' && state.status === GameStatus.Playing) {
+            // End game early and show stats
+            gameOver('You ended the game early');
         }
         else if (e.key === ' ') {
             e.preventDefault();
@@ -394,6 +408,7 @@ function spawnBlock() {
         type,
         snippet: snippetData.snippet,
         language: snippetData.language,
+        snippetData: snippetData.snippetData,
         lane,
         active: true,
     });
@@ -453,6 +468,14 @@ function handleBlockHit(block) {
             state.stats.secureHits++;
             state.stats.streak = 0;
             state.flashEffect = { alpha: 0.5, color: 'rgba(255, 0, 0, ' };
+            // Track mistake - shot a secure block
+            state.mistakes.push({
+                action: 'shot_secure',
+                snippet: block.snippet,
+                language: block.language,
+                type: block.type,
+                snippetData: block.snippetData,
+            });
             // Check if player shot too many secure blocks
             if (state.stats.secureHits >= MAX_SECURE_HITS) {
                 gameOver('You shot too many secure code blocks!');
@@ -497,6 +520,14 @@ function handleBlockReachedBase(block) {
             state.stats.missedVulnerabilities++;
             state.flashEffect = { alpha: 0.4, color: 'rgba(255, 100, 0, ' };
             state.stats.streak = 0;
+            // Track mistake - missed a vulnerability
+            state.mistakes.push({
+                action: 'missed_vulnerability',
+                snippet: block.snippet,
+                language: block.language,
+                type: block.type,
+                snippetData: block.snippetData,
+            });
             // Check if too many vulnerabilities missed
             if (state.stats.missedVulnerabilities >= MAX_MISSED_VULNERABILITIES) {
                 gameOver('Too many vulnerabilities reached production!');
@@ -509,6 +540,14 @@ function handleBlockReachedBase(block) {
             state.stats.missedVulnerabilities++;
             state.flashEffect = { alpha: 0.6, color: 'rgba(255, 0, 100, ' };
             state.stats.streak = 0;
+            // Track mistake - missed malware
+            state.mistakes.push({
+                action: 'missed_vulnerability',
+                snippet: block.snippet,
+                language: block.language,
+                type: block.type,
+                snippetData: block.snippetData,
+            });
             // Check if too many vulnerabilities missed
             if (state.stats.missedVulnerabilities >= MAX_MISSED_VULNERABILITIES) {
                 gameOver('Too many vulnerabilities reached production!');
@@ -688,12 +727,14 @@ function drawBlocks() {
         ctx.shadowColor = borderColor;
         ctx.strokeRect(x, y, block.width, block.height);
         ctx.shadowBlur = 0;
-        // Draw language label in top-right corner
+        // Draw language label HIGHER above the box
         ctx.save();
-        ctx.font = 'bold 11px "Courier New", monospace';
-        ctx.fillStyle = 'rgba(0, 255, 255, 0.8)';
-        ctx.textAlign = 'right';
-        ctx.fillText(block.language, x + block.width - 8, y + 16);
+        ctx.font = 'bold 14px "Courier New", monospace';
+        ctx.fillStyle = '#00ffff';
+        ctx.textAlign = 'center';
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = '#00ffff';
+        ctx.fillText(block.language, x + block.width / 2, y - 22);
         ctx.restore();
         // ABSOLUTE CLIPPING - nothing can render outside this
         ctx.save();
@@ -764,6 +805,44 @@ function togglePause() {
 }
 function gameOver(reason = 'Game Over') {
     state.status = GameStatus.GameOver;
+    let mistakesHTML = '';
+    if (state.mistakes.length > 0) {
+        mistakesHTML = '<div style="margin-top: 30px; max-height: 400px; overflow-y: auto; text-align: left;">';
+        mistakesHTML += '<h3 style="text-align: center; color: #ff5370; margin-bottom: 20px;">📚 LEARNING REVIEW - Your Mistakes</h3>';
+        state.mistakes.forEach((mistake, index) => {
+            const actionText = mistake.action === 'shot_secure'
+                ? '❌ You shot secure code'
+                : '⚠️ You missed this vulnerability';
+            mistakesHTML += `
+                <div style="margin-bottom: 25px; padding: 15px; background: rgba(0, 20, 40, 0.8); border: 2px solid #ff5370; border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong style="color: #ff5370; font-size: 1.1em;">${actionText} #${index + 1}</strong>
+                        <span style="background: rgba(0, 255, 255, 0.2); padding: 4px 10px; border-radius: 4px; color: #00ffff; font-size: 0.9em;">${mistake.language}</span>
+                    </div>
+            `;
+            // Show the code snippet
+            mistakesHTML += `
+                <div style="background: #000; padding: 10px; border-radius: 5px; border: 1px solid #00ffff; margin: 10px 0; font-family: 'Courier New', monospace; font-size: 0.85em; color: #fff;">
+                    <code>${escapeHtml(mistake.snippet)}</code>
+                </div>
+            `;
+            // If we have the annotated data, show educational info
+            if (mistake.snippetData) {
+                const data = mistake.snippetData;
+                if (data.display_name) {
+                    mistakesHTML += `<p style="color: #ffaa00; font-weight: bold; margin: 8px 0;">📌 ${data.display_name}</p>`;
+                }
+                if (data.player_skill) {
+                    mistakesHTML += `<p style="color: #00aaff; margin: 8px 0;"><strong>🎯 Skill:</strong> ${data.player_skill}</p>`;
+                }
+                if (data.analysis_paragraph) {
+                    mistakesHTML += `<p style="color: #ccc; margin: 8px 0; font-size: 0.9em; line-height: 1.4;">${data.analysis_paragraph}</p>`;
+                }
+            }
+            mistakesHTML += '</div>';
+        });
+        mistakesHTML += '</div>';
+    }
     const finalStats = `
         <h3>${reason}</h3>
         <div style="margin: 20px 0; padding: 15px; background: rgba(255, 0, 0, 0.2); border: 1px solid #ff0064; border-radius: 5px;">
@@ -777,8 +856,14 @@ function gameOver(reason = 'Game Over') {
         <p style="color: #ff5370;">Secure Blocks Hit: ${state.stats.secureHits} / ${MAX_SECURE_HITS}</p>
         <p style="color: #ff5370;">Vulnerabilities Missed: ${state.stats.missedVulnerabilities} / ${MAX_MISSED_VULNERABILITIES}</p>
         <p style="margin-top: 20px; color: #00aaff;">Accuracy: ${state.stats.totalShots > 0 ? Math.round(((state.stats.insecureHits + state.stats.malwareHits) / state.stats.totalShots) * 100) : 0}%</p>
+        ${mistakesHTML}
     `;
     showOverlay('GAME OVER', 'Press R to restart', finalStats);
+}
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 function showOverlay(title, message, stats = '') {
     document.getElementById('overlayTitle').textContent = title;
