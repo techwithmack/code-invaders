@@ -36,20 +36,39 @@
             <canvas id="gameCanvas"></canvas>
             
             <div class="stats">
-                <div class="stat-item secure">
-                    <span class="stat-icon">✓</span>
-                    <span class="stat-label">Secure Avoided:</span>
-                    <span id="secure-hits" class="stat-value">0</span>
+                <div class="stat-row">
+                    <div class="stat-item destroyed">
+                        <span class="stat-icon">💥</span>
+                        <span class="stat-label">Secure Destroyed:</span>
+                        <span id="secure-destroyed" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item insecure">
+                        <span class="stat-icon">⚠</span>
+                        <span class="stat-label">Vulns Destroyed:</span>
+                        <span id="insecure-hits" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item malware">
+                        <span class="stat-icon">☠</span>
+                        <span class="stat-label">Malware Destroyed:</span>
+                        <span id="malware-hits" class="stat-value">0</span>
+                    </div>
                 </div>
-                <div class="stat-item insecure">
-                    <span class="stat-icon">⚠</span>
-                    <span class="stat-label">Insecure Destroyed:</span>
-                    <span id="insecure-hits" class="stat-value">0</span>
-                </div>
-                <div class="stat-item malware">
-                    <span class="stat-icon">☠</span>
-                    <span class="stat-label">Malware Destroyed:</span>
-                    <span id="malware-hits" class="stat-value">0</span>
+                <div class="stat-row">
+                    <div class="stat-item secure-good">
+                        <span class="stat-icon">✅</span>
+                        <span class="stat-label">Secure Passed:</span>
+                        <span id="secure-passed" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item insecure-missed">
+                        <span class="stat-icon">⛔</span>
+                        <span class="stat-label">Vulns Missed:</span>
+                        <span id="insecure-missed" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item malware-missed">
+                        <span class="stat-icon">🚨</span>
+                        <span class="stat-label">Malware Missed:</span>
+                        <span id="malware-missed" class="stat-value">0</span>
+                    </div>
                 </div>
             </div>
         </div>

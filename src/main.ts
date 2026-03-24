@@ -25,9 +25,9 @@ const CONFIG = {
     block: {
         width: 280,
         height: 110,
-        initialSpeed: 60,
-        speedIncrement: 5,
-        maxSpeed: 200,
+        initialSpeed: 40,
+        speedIncrement: 3,
+        maxSpeed: 150,
         fontSize: 13,
         lineHeight: 16,
         padding: 12,
@@ -37,10 +37,10 @@ const CONFIG = {
         count: 5,
     },
     spawn: {
-        initialInterval: 2.0,
-        minInterval: 0.5,
-        intervalDecrement: 0.05,
-        laneBuffer: 100,
+        initialInterval: 4.5,
+        minInterval: 2.0,
+        intervalDecrement: 0.03,
+        laneBuffer: 350,
     },
     scoring: {
         hitInsecure: 10,
@@ -159,9 +159,14 @@ interface GameStats {
     secureHits: number;
     insecureHits: number;
     malwareHits: number;
+    secureReached: number;
     insecureReached: number;
     malwareReached: number;
+    missedVulnerabilities: number;
 }
+
+const MAX_SECURE_HITS = 15;
+const MAX_MISSED_VULNERABILITIES = 15;
 
 interface GameState {
     status: GameStatus;
@@ -312,8 +317,10 @@ function resetGame() {
             secureHits: 0,
             insecureHits: 0,
             malwareHits: 0,
+            secureReached: 0,
             insecureReached: 0,
             malwareReached: 0,
+            missedVulnerabilities: 0,
         },
         laneCooldowns: new Array(CONFIG.lanes.count).fill(0),
         screenShake: 0,
@@ -599,6 +606,12 @@ function handleBlockHit(block: CodeBlock) {
             state.stats.secureHits++;
             state.stats.streak = 0;
             state.flashEffect = { alpha: 0.5, color: 'rgba(255, 0, 0, ' };
+            
+            // Check if player shot too many secure blocks
+            if (state.stats.secureHits >= MAX_SECURE_HITS) {
+                gameOver('You shot too many secure code blocks!');
+                return;
+            }
             break;
         case BlockType.Insecure:
             points = CONFIG.scoring.hitInsecure;
@@ -633,18 +646,33 @@ function handleBlockReachedBase(block: CodeBlock) {
     switch (block.type) {
         case BlockType.Secure:
             points = CONFIG.scoring.reachSecure;
+            state.stats.secureReached++;
             break;
         case BlockType.Insecure:
             points = CONFIG.scoring.reachInsecure;
             state.stats.insecureReached++;
+            state.stats.missedVulnerabilities++;
             state.flashEffect = { alpha: 0.4, color: 'rgba(255, 100, 0, ' };
             state.stats.streak = 0;
+            
+            // Check if too many vulnerabilities missed
+            if (state.stats.missedVulnerabilities >= MAX_MISSED_VULNERABILITIES) {
+                gameOver('Too many vulnerabilities reached production!');
+                return;
+            }
             break;
         case BlockType.Malware:
             points = CONFIG.scoring.reachMalware;
             state.stats.malwareReached++;
+            state.stats.missedVulnerabilities++;
             state.flashEffect = { alpha: 0.6, color: 'rgba(255, 0, 100, ' };
             state.stats.streak = 0;
+            
+            // Check if too many vulnerabilities missed
+            if (state.stats.missedVulnerabilities >= MAX_MISSED_VULNERABILITIES) {
+                gameOver('Too many vulnerabilities reached production!');
+                return;
+            }
             break;
     }
 
@@ -931,9 +959,15 @@ function updateHUD() {
             : 0;
     document.getElementById('accuracy')!.textContent = accuracy + '%';
 
-    document.getElementById('secure-hits')!.textContent = state.stats.secureHits.toString();
+    // Top row - destroyed
+    document.getElementById('secure-destroyed')!.textContent = state.stats.secureHits.toString();
     document.getElementById('insecure-hits')!.textContent = state.stats.insecureHits.toString();
     document.getElementById('malware-hits')!.textContent = state.stats.malwareHits.toString();
+    
+    // Bottom row - passed/missed
+    document.getElementById('secure-passed')!.textContent = state.stats.secureReached.toString();
+    document.getElementById('insecure-missed')!.textContent = state.stats.insecureReached.toString();
+    document.getElementById('malware-missed')!.textContent = state.stats.malwareReached.toString();
 }
 
 function togglePause() {
@@ -946,17 +980,22 @@ function togglePause() {
     }
 }
 
-function gameOver() {
+function gameOver(reason: string = 'Game Over') {
     state.status = GameStatus.GameOver;
 
     const finalStats = `
+        <h3>${reason}</h3>
+        <div style="margin: 20px 0; padding: 15px; background: rgba(255, 0, 0, 0.2); border: 1px solid #ff0064; border-radius: 5px;">
+            <p style="font-size: 1.2em; color: #ff5370;">Final Score: ${state.stats.score}</p>
+        </div>
         <h3>FINAL STATISTICS</h3>
-        <p>Score: ${state.stats.score}</p>
         <p>Level Reached: ${state.level}</p>
         <p>Max Streak: ${state.stats.maxStreak}</p>
-        <p>Insecure Blocks Destroyed: ${state.stats.insecureHits}</p>
-        <p>Malware Destroyed: ${state.stats.malwareHits}</p>
-        <p>Secure Blocks Hit (oops!): ${state.stats.secureHits}</p>
+        <p style="color: #ffaa00;">Insecure Blocks Destroyed: ${state.stats.insecureHits}</p>
+        <p style="color: #ff0064;">Malware Destroyed: ${state.stats.malwareHits}</p>
+        <p style="color: #ff5370;">Secure Blocks Hit: ${state.stats.secureHits} / ${MAX_SECURE_HITS}</p>
+        <p style="color: #ff5370;">Vulnerabilities Missed: ${state.stats.missedVulnerabilities} / ${MAX_MISSED_VULNERABILITIES}</p>
+        <p style="margin-top: 20px; color: #00aaff;">Accuracy: ${state.stats.totalShots > 0 ? Math.round(((state.stats.insecureHits + state.stats.malwareHits) / state.stats.totalShots) * 100) : 0}%</p>
     `;
 
     showOverlay('GAME OVER', 'Press R to restart', finalStats);

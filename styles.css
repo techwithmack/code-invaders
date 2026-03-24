@@ -89,12 +89,19 @@ h1 {
 
 .stats {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
+    gap: 10px;
     margin-top: 15px;
     padding: 10px;
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid #00ff41;
     border-radius: 5px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
 }
 
 .stat-item {
@@ -105,9 +112,9 @@ h1 {
     border-radius: 3px;
 }
 
-.stat-item.secure {
-    background: rgba(0, 255, 65, 0.1);
-    border: 1px solid #00ff41;
+.stat-item.destroyed {
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid #ff5370;
 }
 
 .stat-item.insecure {
@@ -118,6 +125,21 @@ h1 {
 .stat-item.malware {
     background: rgba(255, 0, 100, 0.1);
     border: 1px solid #ff0064;
+}
+
+.stat-item.secure-good {
+    background: rgba(0, 255, 65, 0.1);
+    border: 1px solid #00ff41;
+}
+
+.stat-item.insecure-missed {
+    background: rgba(255, 100, 0, 0.15);
+    border: 1px solid #ff6400;
+}
+
+.stat-item.malware-missed {
+    background: rgba(255, 0, 0, 0.15);
+    border: 1px solid #ff0000;
 }
 
 .stat-icon {
@@ -134,7 +156,11 @@ h1 {
     font-size: 1.1em;
 }
 
-.stat-item.secure .stat-value {
+.stat-item.destroyed .stat-value {
+    color: #ff5370;
+}
+
+.stat-item.secure-good .stat-value {
     color: #00ff41;
 }
 
@@ -144,6 +170,14 @@ h1 {
 
 .stat-item.malware .stat-value {
     color: #ff0064;
+}
+
+.stat-item.insecure-missed .stat-value {
+    color: #ff6400;
+}
+
+.stat-item.malware-missed .stat-value {
+    color: #ff0000;
 }
 
 .controls {
