@@ -88,9 +88,9 @@ interface TrendPackData {
 }
 
 interface SnippetData {
-    secure: string[];
-    insecure: string[];
-    malware: string[];
+    secure: Array<{ snippet: string; language: string }>;
+    insecure: Array<{ snippet: string; language: string }>;
+    malware: Array<{ snippet: string; language: string }>;
 }
 
 let SNIPPETS: SnippetData = {
@@ -138,6 +138,7 @@ interface Bullet extends Entity {
 interface CodeBlock extends Entity {
     type: BlockType;
     snippet: string;
+    language: string;
     lane: number;
     active: boolean;
 }
@@ -211,24 +212,30 @@ async function loadSnippets(): Promise<void> {
         }
         const trendPack: TrendPackData = await response.json();
         
-        // Extract snippets from the trend pack format
-        SNIPPETS.insecure = trendPack.insecure.map(item => item.snippet);
-        SNIPPETS.malware = trendPack.malware.map(item => item.snippet);
+        // Extract snippets with language info from the trend pack format
+        SNIPPETS.insecure = trendPack.insecure.map(item => ({ 
+            snippet: item.snippet || '', 
+            language: item.language || 'Unknown'
+        }));
+        SNIPPETS.malware = trendPack.malware.map(item => ({ 
+            snippet: item.snippet || '', 
+            language: item.language || 'Unknown'
+        }));
         
         // Add secure code examples (not in trend pack, so we define them here)
         SNIPPETS.secure = [
-            'stmt = conn.prepareStatement("SELECT * FROM users WHERE id=?")',
-            'const result = await db.query("SELECT * FROM posts WHERE id=$1", [postId])',
-            'cursor.execute("SELECT * FROM accounts WHERE email=?", (email,))',
-            'PreparedStatement ps = conn.prepareStatement("SELECT * FROM files WHERE id=?")',
-            'const safe = DOMPurify.sanitize(userInput)',
-            'User.where(id: params[:id]).first',
-            'password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())',
-            'const token = jwt.sign(payload, secret, {expiresIn: "1h"})',
-            'if (!validator.isEmail(email)) throw new Error("Invalid")',
-            'db.collection.findOne({_id: new ObjectId(id)})',
-            'const escaped = escapeHtml(userInput)',
-            'crypto.randomBytes(32).toString("hex")',
+            { snippet: 'stmt = conn.prepareStatement("SELECT * FROM users WHERE id=?")', language: 'Java' },
+            { snippet: 'const result = await db.query("SELECT * FROM posts WHERE id=$1", [postId])', language: 'JavaScript' },
+            { snippet: 'cursor.execute("SELECT * FROM accounts WHERE email=?", (email,))', language: 'Python' },
+            { snippet: 'PreparedStatement ps = conn.prepareStatement("SELECT * FROM files WHERE id=?")', language: 'Java' },
+            { snippet: 'const safe = DOMPurify.sanitize(userInput)', language: 'JavaScript' },
+            { snippet: 'User.where(id: params[:id]).first', language: 'Ruby' },
+            { snippet: 'password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())', language: 'Python' },
+            { snippet: 'const token = jwt.sign(payload, secret, {expiresIn: "1h"})', language: 'JavaScript' },
+            { snippet: 'if (!validator.isEmail(email)) throw new Error("Invalid")', language: 'JavaScript' },
+            { snippet: 'db.collection.findOne({_id: new ObjectId(id)})', language: 'JavaScript' },
+            { snippet: 'const escaped = escapeHtml(userInput)', language: 'JavaScript' },
+            { snippet: 'crypto.randomBytes(32).toString("hex")', language: 'JavaScript' },
         ];
         
         console.log('✓ Loaded Code Invaders Trend Pack:', {
@@ -280,10 +287,13 @@ async function init() {
 }
 
 function calculateLanePositions() {
-    const laneWidth = CONFIG.canvas.width / CONFIG.lanes.count;
     lanePositions = [];
+    const blockHalfWidth = CONFIG.block.width / 2;
+    const usableWidth = CONFIG.canvas.width - CONFIG.block.width; // Account for block width
+    const spacing = usableWidth / (CONFIG.lanes.count - 1);
+    
     for (let i = 0; i < CONFIG.lanes.count; i++) {
-        lanePositions.push(laneWidth * i + laneWidth / 2);
+        lanePositions.push(blockHalfWidth + spacing * i);
     }
 }
 
@@ -525,7 +535,7 @@ function spawnBlock() {
 
     const lane = availableLanes[Math.floor(Math.random() * availableLanes.length)];
     const type = determineBlockType();
-    const snippet = getRandomSnippet(type);
+    const snippetData = getRandomSnippet(type);
 
     state.blocks.push({
         pos: {
@@ -536,7 +546,8 @@ function spawnBlock() {
         width: CONFIG.block.width,
         height: CONFIG.block.height,
         type,
-        snippet,
+        snippet: snippetData.snippet,
+        language: snippetData.language,
         lane,
         active: true,
     });
@@ -556,7 +567,7 @@ function determineBlockType(): BlockType {
     }
 }
 
-function getRandomSnippet(type: BlockType): string {
+function getRandomSnippet(type: BlockType): { snippet: string; language: string } {
     const snippets = SNIPPETS[type];
     return snippets[Math.floor(Math.random() * snippets.length)];
 }
@@ -891,6 +902,14 @@ function drawBlocks() {
         ctx.shadowColor = borderColor;
         ctx.strokeRect(x, y, block.width, block.height);
         ctx.shadowBlur = 0;
+
+        // Draw language label on top of the box
+        ctx.save();
+        ctx.font = 'bold 12px "Courier New", monospace';
+        ctx.fillStyle = 'rgba(0, 255, 255, 0.9)';
+        ctx.textAlign = 'center';
+        ctx.fillText(block.language, x + block.width / 2, y - 8);
+        ctx.restore();
 
         // ABSOLUTE CLIPPING - nothing can render outside this
         ctx.save();
