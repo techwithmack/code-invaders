@@ -23,7 +23,7 @@ const CONFIG = {
         speed: 400,
     },
     block: {
-        width: 280,
+        width: 560,
         height: 110,
         initialSpeed: 40,
         speedIncrement: 3,
@@ -31,7 +31,7 @@ const CONFIG = {
         fontSize: 13,
         lineHeight: 16,
         padding: 12,
-        maxCharsPerLine: 40,
+        maxCharsPerLine: 80,
     },
     lanes: {
         count: 5,
