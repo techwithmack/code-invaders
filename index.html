@@ -12,6 +12,7 @@
         <header>
             <h1>CODE INVADERS</h1>
             <p class="subtitle">Defend Against Vulnerable Code!</p>
+            <button id="howToPlayBtn" class="how-to-play-btn" title="How to Play">?</button>
         </header>
         
         <div class="game-wrapper">
@@ -104,6 +105,7 @@
         <div id="gameOverlay" class="overlay hidden">
             <div class="overlay-content">
                 <h2 id="overlayTitle">GAME PAUSED</h2>
+                <button id="restartButton" class="restart-button hidden">🔄 Restart Game</button>
                 <p id="overlayMessage">Press P to continue</p>
                 <div id="finalStats" class="final-stats"></div>
             </div>
@@ -118,6 +120,69 @@
                 <div id="codeModalBody" class="code-modal-body"></div>
                 <div class="code-modal-footer">
                     <p>Click outside or press ESC to close</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="howToPlayModal" class="overlay hidden">
+            <div class="how-to-play-content">
+                <div class="code-modal-header">
+                    <h3>How to Play</h3>
+                    <button id="closeHowToPlay" class="close-button">✕</button>
+                </div>
+                <div class="how-to-play-body">
+                    <section>
+                        <h4>🎯 Objective</h4>
+                        <p>Destroy vulnerable code and malware while letting secure code pass through safely!</p>
+                    </section>
+
+                    <section>
+                        <h4>🎮 Controls</h4>
+                        <ul>
+                            <li><strong>Desktop:</strong> Arrow keys or A/D to move, SPACE to shoot</li>
+                            <li><strong>Mobile:</strong> Drag to move, tap to shoot</li>
+                            <li><strong>View Code:</strong> Click/tap any code block to view the full code</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h4>📊 Code Types</h4>
+                        <ul>
+                            <li><strong>Secure Code:</strong> Let it pass! Don't shoot it.</li>
+                            <li><strong>Vulnerable Code (⚠):</strong> Shoot it before it reaches the bottom!</li>
+                            <li><strong>Malware (☠):</strong> Very dangerous! Shoot it immediately!</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h4>💯 Scoring</h4>
+                        <ul>
+                            <li>Destroy Vulnerable Code: <span class="score-positive">+10 points</span></li>
+                            <li>Destroy Malware: <span class="score-positive">+25 points</span></li>
+                            <li>Shoot Secure Code: <span class="score-negative">-15 points</span></li>
+                            <li>Miss Vulnerable Code: <span class="score-negative">-20 points</span></li>
+                            <li>Miss Malware: <span class="score-negative">-40 points</span></li>
+                            <li>Let Secure Code Pass: <span class="score-positive">+2 points</span></li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h4>🚨 Game Over Conditions</h4>
+                        <ul>
+                            <li>Shoot 15 secure code blocks</li>
+                            <li>Miss 10 vulnerabilities/malware combined</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h4>💡 Pro Tips</h4>
+                        <ul>
+                            <li>Click on code blocks to read them better - the game keeps running!</li>
+                            <li>Build streaks by destroying multiple threats in a row for bonus points</li>
+                            <li>The game gets faster and harder as you progress</li>
+                            <li>Press 'E' to end early and review your mistakes</li>
+                        </ul>
+                    </section>
                 </div>
             </div>
         </div>

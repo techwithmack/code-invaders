@@ -250,7 +250,7 @@ interface GameStats {
 }
 
 const MAX_SECURE_HITS = 15;
-const MAX_MISSED_VULNERABILITIES = 15;
+const MAX_MISSED_VULNERABILITIES = 10;
 
 interface GameState {
     status: GameStatus;
@@ -603,10 +603,39 @@ function setupEventListeners() {
         }
     });
 
+    // How to Play modal handlers
+    const howToPlayModal = document.getElementById('howToPlayModal')!;
+    const howToPlayBtn = document.getElementById('howToPlayBtn')!;
+    const closeHowToPlay = document.getElementById('closeHowToPlay')!;
+
+    howToPlayBtn.addEventListener('click', () => {
+        howToPlayModal.classList.remove('hidden');
+    });
+
+    closeHowToPlay.addEventListener('click', () => {
+        howToPlayModal.classList.add('hidden');
+    });
+
+    howToPlayModal.addEventListener('click', (e) => {
+        if (e.target === howToPlayModal) {
+            howToPlayModal.classList.add('hidden');
+        }
+    });
+
+    // Restart button handler
+    document.getElementById('restartButton')!.addEventListener('click', () => {
+        resetGame();
+    });
+
     window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !document.getElementById('codeModal')!.classList.contains('hidden')) {
-            e.preventDefault();
-            hideCodeModal();
+        if (e.key === 'Escape') {
+            if (!document.getElementById('codeModal')!.classList.contains('hidden')) {
+                e.preventDefault();
+                hideCodeModal();
+            } else if (!howToPlayModal.classList.contains('hidden')) {
+                e.preventDefault();
+                howToPlayModal.classList.add('hidden');
+            }
         }
     });
 
@@ -1392,7 +1421,7 @@ function gameOver(reason: string = 'Game Over') {
         ${mistakesHTML}
     `;
 
-    showOverlay('GAME OVER', 'Press R to restart', finalStats);
+    showOverlay('GAME OVER', '', finalStats);
 }
 
 function escapeHtml(text: string): string {
@@ -1406,10 +1435,19 @@ function showOverlay(title: string, message: string, stats: string = '') {
     document.getElementById('overlayMessage')!.textContent = message;
     document.getElementById('finalStats')!.innerHTML = stats;
     document.getElementById('gameOverlay')!.classList.remove('hidden');
+    
+    // Show restart button only on game over (when stats are present)
+    const restartButton = document.getElementById('restartButton')!;
+    if (stats) {
+        restartButton.classList.remove('hidden');
+    } else {
+        restartButton.classList.add('hidden');
+    }
 }
 
 function hideOverlay() {
     document.getElementById('gameOverlay')!.classList.add('hidden');
+    document.getElementById('restartButton')!.classList.add('hidden');
 }
 
 function showCodeModal(block: CodeBlock) {
