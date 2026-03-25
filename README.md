@@ -16,22 +16,36 @@ A retro arcade game for learning to identify secure vs. insecure code patterns. 
 
 ### Controls
 
+#### Desktop
 - **← → or A/D**: Move spaceship left/right
 - **SPACE**: Shoot
+- **Click on code blocks**: View full code in scrollable modal
 - **P**: Pause/Resume
+- **E**: End game early and review mistakes
 - **R**: Restart (after game over)
+
+#### Mobile
+- **Drag**: Move spaceship
+- **Tap anywhere**: Shoot
+- **Tap on code blocks**: View full code in scrollable modal
+- **End Game button**: Available at bottom of screen to end early
+- **Restart button**: Appears on game over screen
+
+> 💡 **Pro Tip**: Tap/click code blocks to read them in full while the game continues running!
 
 ### Block Types
 
-1. **🟢 Secure Code (Green)**
+All code blocks are displayed with cyan borders and syntax highlighting for easy reading.
+
+1. **✅ Secure Code**
    - Best practices: prepared statements, parameterized queries, proper validation
    - **DON'T SHOOT!** Penalty: -15 points
 
-2. **🟡 Insecure Code (Orange)**
+2. **⚠️ Insecure Code (Vulnerabilities)**
    - Vulnerabilities: SQL injection, eval(), unsafe shell execution
    - **DESTROY!** Reward: +10 points
 
-3. **🔴 Malware (Red/Purple)**
+3. **☠️ Malware**
    - Obfuscated code, C2 beacons, suspicious patterns
    - **DESTROY!** Reward: +25 points
 
@@ -47,14 +61,24 @@ A retro arcade game for learning to identify secure vs. insecure code patterns. 
 | Secure Reaches Base | +2 |
 | **Combo (3+ streak)** | **1.5x multiplier** |
 
+### Game Over Conditions
+
+The game ends when:
+- You shoot **15 secure code blocks** (too many false positives!)
+- You miss **10 vulnerabilities/malware combined** (too many threats got through!)
+
 ### Features
 
-- **5 Vertical Lanes**: Code blocks fall along defined lanes
+- **Responsive Design**: Optimized for both desktop (5 lanes) and mobile (3 lanes)
+- **Touch Controls**: Full mobile support with tap and drag mechanics
+- **Interactive Code Review**: Click/tap any code block to view full code
 - **Progressive Difficulty**: Spawn rate and speed increase over time
 - **Streak System**: Chain correct hits for combo bonuses
 - **Level Progression**: Based on survival time
-- **Real Code Examples**: Learn from actual secure/insecure patterns
-- **Retro Aesthetics**: Neon visuals, screen shake, particle effects
+- **Learning Review**: End-game report showing all mistakes with explanations
+- **Real Code Examples**: Learn from actual secure/insecure patterns (JavaScript, Python, TypeScript)
+- **How to Play Guide**: Built-in tutorial accessible via "?" button
+- **Retro Aesthetics**: Purple-themed neon visuals, screen shake, particle effects
 
 ## 🚀 Quick Start
 
@@ -100,14 +124,19 @@ A retro arcade game for learning to identify secure vs. insecure code patterns. 
 ```
 code-invaders/
 │
-├── index.html          # Main HTML file
-├── styles.css          # Game styling and UI
-├── snippets.json       # Code snippets database (EASY TO EDIT!)
+├── index.html                                # Main HTML file
+├── styles.css                                # Game styling and UI
+├── snippets.json                            # Code snippets database
+├── code-invaders-trend-pack-annotated.json  # Rich annotated snippets (auto-loaded)
+├── assets/
+│   └── images/
+│       └── player-ship.png                  # Custom player ship icon
 ├── src/
-│   └── main.ts         # TypeScript game source code
+│   └── main.ts                              # TypeScript game source code
 ├── dist/
-│   └── main.js         # Compiled JavaScript (generated)
-└── README.md           # This file
+│   └── main.js                              # Compiled JavaScript (generated)
+├── README.md                                # This file
+└── DEPLOYMENT-GUIDE.md                      # How to deploy live
 ```
 
 ## 🎨 Architecture
@@ -249,11 +278,24 @@ tsc src/main.ts --outDir dist --target ES6 --lib ES6,DOM
 
 ## 🎓 Learning Tips
 
-1. **Start by observing**: Let blocks fall to learn patterns
-2. **Focus on keywords**: `eval()`, `execute()`, `base64`, `+` in SQL
-3. **Avoid panic shooting**: Accuracy matters!
-4. **Build streaks**: Combo multipliers significantly boost score
-5. **Watch the base line**: Don't let malware through!
+1. **Use the code viewer**: Click/tap code blocks to read them in full detail
+2. **Start by observing**: Let blocks fall to learn patterns
+3. **Focus on keywords**: `eval()`, `execute()`, `base64`, `+` in SQL
+4. **Avoid panic shooting**: Accuracy matters!
+5. **Build streaks**: Combo multipliers significantly boost score
+6. **Watch the base line**: Don't let malware through!
+7. **Review your mistakes**: Use "End Game" button to see your learning report
+8. **Mobile players**: Use landscape mode for better visibility
+
+## ✨ Recent Updates
+
+- ✅ **Mobile Support**: Full touch controls with tap and drag
+- ✅ **Responsive Design**: Optimized for mobile and desktop
+- ✅ **Code Viewer**: Click code blocks to view full code
+- ✅ **Learning Review**: Detailed end-game analysis of mistakes
+- ✅ **Custom Player Ship**: Branded with custom icon
+- ✅ **How to Play**: In-game tutorial guide
+- ✅ **Mobile Buttons**: End game and restart buttons for touch devices
 
 ## 🔮 Future Enhancements
 
@@ -265,7 +307,6 @@ Potential additions:
 - More code languages
 - Difficulty settings
 - Sound effects and music
-- Mobile touch controls
 
 ## 🌐 Deploying Live
 
