@@ -7,7 +7,7 @@
 body {
     font-family: 'Courier New', monospace;
     background: linear-gradient(180deg, #0a0a1a 0%, #1a0a2e 100%);
-    color: #00ff41;
+    color: #a855f7;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -23,13 +23,13 @@ body {
 header {
     text-align: center;
     margin-bottom: 20px;
-    text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
+    text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7;
 }
 
 h1 {
     font-size: 3em;
     letter-spacing: 0.2em;
-    color: #00ff41;
+    color: #a855f7;
     margin-bottom: 5px;
 }
 
@@ -41,10 +41,10 @@ h1 {
 
 .game-wrapper {
     background: rgba(0, 0, 0, 0.6);
-    border: 2px solid #00ff41;
+    border: 2px solid #a855f7;
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
 }
 
 .hud {
@@ -52,8 +52,8 @@ h1 {
     justify-content: space-around;
     margin-bottom: 15px;
     padding: 10px;
-    background: rgba(0, 255, 65, 0.1);
-    border: 1px solid #00ff41;
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid #a855f7;
     border-radius: 5px;
 }
 
@@ -69,10 +69,10 @@ h1 {
 }
 
 .hud-value {
-    color: #00ff41;
+    color: #a855f7;
     font-size: 1.2em;
     font-weight: bold;
-    text-shadow: 0 0 5px #00ff41;
+    text-shadow: 0 0 5px #a855f7;
 }
 
 #gameCanvas {
@@ -82,8 +82,8 @@ h1 {
     height: 700px;
     margin: 0 auto;
     background: #000;
-    border: 2px solid #00ff41;
-    box-shadow: 0 0 20px rgba(0, 255, 65, 0.5), inset 0 0 50px rgba(0, 255, 65, 0.1);
+    border: 2px solid #a855f7;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), inset 0 0 50px rgba(168, 85, 247, 0.1);
     cursor: crosshair;
 }
 
@@ -94,7 +94,7 @@ h1 {
     margin-top: 15px;
     padding: 10px;
     background: rgba(0, 0, 0, 0.4);
-    border: 1px solid #00ff41;
+    border: 1px solid #a855f7;
     border-radius: 5px;
 }
 
@@ -128,8 +128,8 @@ h1 {
 }
 
 .stat-item.secure-good {
-    background: rgba(0, 255, 65, 0.1);
-    border: 1px solid #00ff41;
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid #a855f7;
 }
 
 .stat-item.insecure-missed {
@@ -161,7 +161,7 @@ h1 {
 }
 
 .stat-item.secure-good .stat-value {
-    color: #00ff41;
+    color: #a855f7;
 }
 
 .stat-item.insecure .stat-value {
@@ -229,11 +229,11 @@ h1 {
 
 .overlay-content {
     background: rgba(10, 10, 26, 0.95);
-    border: 3px solid #00ff41;
+    border: 3px solid #a855f7;
     border-radius: 10px;
     padding: 40px;
     text-align: center;
-    box-shadow: 0 0 50px rgba(0, 255, 65, 0.5);
+    box-shadow: 0 0 50px rgba(168, 85, 247, 0.5);
     max-width: 900px;
     max-height: 90vh;
     overflow-y: auto;
@@ -242,7 +242,7 @@ h1 {
 #overlayTitle {
     font-size: 2.5em;
     margin-bottom: 20px;
-    text-shadow: 0 0 15px #00ff41;
+    text-shadow: 0 0 15px #a855f7;
 }
 
 #overlayMessage {
@@ -254,8 +254,8 @@ h1 {
 .final-stats {
     margin-top: 20px;
     padding: 20px;
-    background: rgba(0, 255, 65, 0.1);
-    border: 1px solid #00ff41;
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid #a855f7;
     border-radius: 5px;
 }
 
