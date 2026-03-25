@@ -226,6 +226,9 @@ let keys: { [key: string]: boolean } = {};
 // Lane positions
 let lanePositions: number[] = [];
 
+// Player ship image
+let playerShipImage: HTMLImageElement | null = null;
+
 // ============================================================================
 // INITIALIZATION
 // ============================================================================
@@ -312,6 +315,23 @@ async function init() {
     canvas.width = CONFIG.canvas.width;
     canvas.height = CONFIG.canvas.height;
     ctx = canvas.getContext('2d')!;
+
+    // Load player ship image
+    playerShipImage = new Image();
+    playerShipImage.src = 'assets/images/player-ship.png';
+    
+    await new Promise<void>((resolve) => {
+        if (playerShipImage!.complete) {
+            resolve();
+        } else {
+            playerShipImage!.onload = () => resolve();
+            playerShipImage!.onerror = () => {
+                console.warn('Failed to load player ship image, using fallback');
+                playerShipImage = null;
+                resolve();
+            };
+        }
+    });
 
     // Load snippets from JSON file
     await loadSnippets();
@@ -842,22 +862,41 @@ function drawBaseLine() {
 function drawPlayer() {
     const p = state.player;
 
-    ctx.fillStyle = '#00aaff';
-    ctx.strokeStyle = '#00ddff';
-    ctx.lineWidth = 2;
+    if (playerShipImage && playerShipImage.complete) {
+        // Draw the player ship image
+        ctx.save();
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#00aaff';
+        
+        ctx.drawImage(
+            playerShipImage,
+            p.pos.x - p.width / 2,
+            p.pos.y - p.height / 2,
+            p.width,
+            p.height
+        );
+        
+        ctx.shadowBlur = 0;
+        ctx.restore();
+    } else {
+        // Fallback triangle if image doesn't load
+        ctx.fillStyle = '#00aaff';
+        ctx.strokeStyle = '#00ddff';
+        ctx.lineWidth = 2;
 
-    ctx.beginPath();
-    ctx.moveTo(p.pos.x, p.pos.y - p.height / 2);
-    ctx.lineTo(p.pos.x - p.width / 2, p.pos.y + p.height / 2);
-    ctx.lineTo(p.pos.x + p.width / 2, p.pos.y + p.height / 2);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(p.pos.x, p.pos.y - p.height / 2);
+        ctx.lineTo(p.pos.x - p.width / 2, p.pos.y + p.height / 2);
+        ctx.lineTo(p.pos.x + p.width / 2, p.pos.y + p.height / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
 
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = '#00aaff';
-    ctx.fill();
-    ctx.shadowBlur = 0;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#00aaff';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
 }
 
 function drawBullets() {
