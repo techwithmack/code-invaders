@@ -88,6 +88,9 @@
                     <span class="key">DRAG</span> Move
                 </div>
                 <div class="control-group">
+                    <span class="key">CLICK CODE</span> View Full
+                </div>
+                <div class="control-group">
                     <span class="key">P</span> Pause
                 </div>
                 <div class="control-group">
@@ -103,6 +106,19 @@
                 <h2 id="overlayTitle">GAME PAUSED</h2>
                 <p id="overlayMessage">Press P to continue</p>
                 <div id="finalStats" class="final-stats"></div>
+            </div>
+        </div>
+
+        <div id="codeModal" class="overlay hidden">
+            <div class="code-modal-content">
+                <div class="code-modal-header">
+                    <h3 id="codeModalLanguage"></h3>
+                    <button id="closeCodeModal" class="close-button">✕</button>
+                </div>
+                <div id="codeModalBody" class="code-modal-body"></div>
+                <div class="code-modal-footer">
+                    <p>Click outside or press ESC to close</p>
+                </div>
             </div>
         </div>
     </div>

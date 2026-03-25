@@ -343,6 +343,8 @@ function setupEventListeners() {
     });
     // Touch controls for mobile
     let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
     let isTouching = false;
     canvas.addEventListener('touchstart', (e) => {
         e.preventDefault();
@@ -350,10 +352,8 @@ function setupEventListeners() {
         const touch = e.touches[0];
         const rect = canvas.getBoundingClientRect();
         touchStartX = touch.clientX - rect.left;
-        // Shoot on touch
-        if (state.status === GameStatus.Playing) {
-            shoot();
-        }
+        touchStartY = touch.clientY - rect.top;
+        touchStartTime = Date.now();
     });
     canvas.addEventListener('touchmove', (e) => {
         e.preventDefault();
@@ -369,16 +369,36 @@ function setupEventListeners() {
     });
     canvas.addEventListener('touchend', (e) => {
         e.preventDefault();
+        const touchDuration = Date.now() - touchStartTime;
+        const touch = e.changedTouches[0];
+        const rect = canvas.getBoundingClientRect();
+        const touchEndX = touch.clientX - rect.left;
+        const touchEndY = touch.clientY - rect.top;
+        // Check if it was a tap (not a drag) and quick (< 300ms)
+        const distance = Math.sqrt(Math.pow(touchEndX - touchStartX, 2) +
+            Math.pow(touchEndY - touchStartY, 2));
+        if (distance < 20 && touchDuration < 300) {
+            // Check if tapped on a code block
+            const clickedBlock = checkCodeBlockClick(touchStartX, touchStartY);
+            if (clickedBlock) {
+                showCodeModal(clickedBlock);
+            }
+            else if (state.status === GameStatus.Playing) {
+                // Regular tap to shoot
+                shoot();
+            }
+        }
         isTouching = false;
     });
     // Mouse controls (similar to touch for desktop click-and-drag)
     let isMouseDown = false;
+    let mouseDownX = 0;
+    let mouseDownY = 0;
     canvas.addEventListener('mousedown', (e) => {
         isMouseDown = true;
-        // Shoot on click
-        if (state.status === GameStatus.Playing) {
-            shoot();
-        }
+        const rect = canvas.getBoundingClientRect();
+        mouseDownX = e.clientX - rect.left;
+        mouseDownY = e.clientY - rect.top;
     });
     canvas.addEventListener('mousemove', (e) => {
         if (!isMouseDown || state.status !== GameStatus.Playing)
@@ -388,11 +408,39 @@ function setupEventListeners() {
         const canvasX = (mouseX / rect.width) * CONFIG.canvas.width;
         state.player.pos.x = Math.max(state.player.width / 2, Math.min(CONFIG.canvas.width - state.player.width / 2, canvasX));
     });
-    canvas.addEventListener('mouseup', () => {
+    canvas.addEventListener('mouseup', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseUpX = e.clientX - rect.left;
+        const mouseUpY = e.clientY - rect.top;
+        const distance = Math.sqrt(Math.pow(mouseUpX - mouseDownX, 2) +
+            Math.pow(mouseUpY - mouseDownY, 2));
+        // If it was a click (not a drag)
+        if (distance < 10) {
+            const clickedBlock = checkCodeBlockClick(mouseDownX, mouseDownY);
+            if (clickedBlock) {
+                showCodeModal(clickedBlock);
+            }
+            else if (state.status === GameStatus.Playing) {
+                shoot();
+            }
+        }
         isMouseDown = false;
     });
     canvas.addEventListener('mouseleave', () => {
         isMouseDown = false;
+    });
+    // Code modal close handlers
+    document.getElementById('closeCodeModal').addEventListener('click', hideCodeModal);
+    document.getElementById('codeModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('codeModal')) {
+            hideCodeModal();
+        }
+    });
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !document.getElementById('codeModal').classList.contains('hidden')) {
+            e.preventDefault();
+            hideCodeModal();
+        }
     });
     // Handle window resize for responsive layout
     let resizeTimeout;
@@ -1035,6 +1083,36 @@ function showOverlay(title, message, stats = '') {
 }
 function hideOverlay() {
     document.getElementById('gameOverlay').classList.add('hidden');
+}
+function showCodeModal(block) {
+    document.getElementById('codeModalLanguage').textContent = `${block.language} Code`;
+    document.getElementById('codeModalBody').textContent = block.snippet;
+    document.getElementById('codeModal').classList.remove('hidden');
+}
+function hideCodeModal() {
+    document.getElementById('codeModal').classList.add('hidden');
+}
+function checkCodeBlockClick(x, y) {
+    // Convert screen coordinates to canvas coordinates
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = CONFIG.canvas.width / rect.width;
+    const scaleY = CONFIG.canvas.height / rect.height;
+    const canvasX = x * scaleX;
+    const canvasY = y * scaleY;
+    // Check if click is on any code block
+    for (const block of state.blocks) {
+        if (!block.active)
+            continue;
+        const blockLeft = block.pos.x - block.width / 2;
+        const blockRight = block.pos.x + block.width / 2;
+        const blockTop = block.pos.y - block.height / 2;
+        const blockBottom = block.pos.y + block.height / 2;
+        if (canvasX >= blockLeft && canvasX <= blockRight &&
+            canvasY >= blockTop && canvasY <= blockBottom) {
+            return block;
+        }
+    }
+    return null;
 }
 // ============================================================================
 // START GAME

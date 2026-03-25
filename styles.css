@@ -268,6 +268,75 @@ h1 {
     font-size: 1.1em;
 }
 
+.code-modal-content {
+    background: rgba(10, 10, 26, 0.98);
+    border: 3px solid #a855f7;
+    border-radius: 10px;
+    padding: 0;
+    max-width: 90vw;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 50px rgba(168, 85, 247, 0.5);
+}
+
+.code-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 2px solid #a855f7;
+    background: rgba(168, 85, 247, 0.1);
+}
+
+.code-modal-header h3 {
+    color: #a855f7;
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.close-button {
+    background: rgba(255, 0, 100, 0.3);
+    border: 2px solid #ff0064;
+    color: #fff;
+    font-size: 1.5em;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.close-button:hover {
+    background: rgba(255, 0, 100, 0.6);
+    transform: scale(1.1);
+}
+
+.code-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: rgba(0, 20, 40, 0.95);
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #fff;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.code-modal-footer {
+    padding: 15px;
+    text-align: center;
+    border-top: 2px solid #a855f7;
+    background: rgba(168, 85, 247, 0.1);
+    color: #999;
+    font-size: 0.9em;
+}
+
 .mobile-only {
     display: none;
 }
