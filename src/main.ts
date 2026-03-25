@@ -597,14 +597,19 @@ function spawnBlock() {
     const type = determineBlockType();
     const snippetData = getRandomSnippet(type);
 
+    // Calculate dynamic height based on number of lines
+    const lines = snippetData.snippet.split('\n');
+    const lineCount = Math.min(lines.length, 6); // Max 6 lines displayed
+    const dynamicHeight = (CONFIG.block.padding * 2) + (lineCount * CONFIG.block.lineHeight) + 8;
+
     state.blocks.push({
         pos: {
             x: lanePositions[lane],
-            y: -CONFIG.block.height / 2,
+            y: -dynamicHeight / 2,
         },
         vel: { x: 0, y: state.blockSpeed },
         width: CONFIG.block.width,
-        height: CONFIG.block.height,
+        height: dynamicHeight,
         type,
         snippet: snippetData.snippet,
         language: snippetData.language,
