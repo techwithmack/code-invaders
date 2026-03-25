@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Code Invaders - Secure Coding Training Game</title>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -73,23 +74,29 @@
             </div>
         </div>
         
-        <div class="controls">
-            <div class="control-group">
-                <span class="key">← →</span> or <span class="key">A D</span> Move
+            <div class="controls">
+                <div class="control-group desktop-only">
+                    <span class="key">← →</span> or <span class="key">A D</span> Move
+                </div>
+                <div class="control-group desktop-only">
+                    <span class="key">SPACE</span> Shoot
+                </div>
+                <div class="control-group mobile-only">
+                    <span class="key">TAP</span> Shoot
+                </div>
+                <div class="control-group mobile-only">
+                    <span class="key">DRAG</span> Move
+                </div>
+                <div class="control-group">
+                    <span class="key">P</span> Pause
+                </div>
+                <div class="control-group">
+                    <span class="key">E</span> End & Review
+                </div>
+                <div class="control-group">
+                    <span class="key">R</span> Restart
+                </div>
             </div>
-            <div class="control-group">
-                <span class="key">SPACE</span> Shoot
-            </div>
-            <div class="control-group">
-                <span class="key">P</span> Pause
-            </div>
-            <div class="control-group">
-                <span class="key">E</span> End & Review
-            </div>
-            <div class="control-group">
-                <span class="key">R</span> Restart
-            </div>
-        </div>
         
         <div id="gameOverlay" class="overlay hidden">
             <div class="overlay-content">

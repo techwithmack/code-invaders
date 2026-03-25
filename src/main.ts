@@ -419,6 +419,79 @@ function setupEventListeners() {
     window.addEventListener('keyup', (e) => {
         keys[e.key.toLowerCase()] = false;
     });
+
+    // Touch controls for mobile
+    let touchStartX = 0;
+    let isTouching = false;
+
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        isTouching = true;
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        touchStartX = touch.clientX - rect.left;
+        
+        // Shoot on touch
+        if (state.status === GameStatus.Playing) {
+            shoot();
+        }
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (!isTouching || state.status !== GameStatus.Playing) return;
+
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        const touchX = touch.clientX - rect.left;
+        
+        // Convert canvas touch position to game world position
+        const canvasX = (touchX / rect.width) * CONFIG.canvas.width;
+        
+        // Move player to touch position
+        state.player.pos.x = Math.max(
+            state.player.width / 2,
+            Math.min(CONFIG.canvas.width - state.player.width / 2, canvasX)
+        );
+    });
+
+    canvas.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        isTouching = false;
+    });
+
+    // Mouse controls (similar to touch for desktop click-and-drag)
+    let isMouseDown = false;
+
+    canvas.addEventListener('mousedown', (e) => {
+        isMouseDown = true;
+        
+        // Shoot on click
+        if (state.status === GameStatus.Playing) {
+            shoot();
+        }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (!isMouseDown || state.status !== GameStatus.Playing) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const canvasX = (mouseX / rect.width) * CONFIG.canvas.width;
+        
+        state.player.pos.x = Math.max(
+            state.player.width / 2,
+            Math.min(CONFIG.canvas.width - state.player.width / 2, canvasX)
+        );
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        isMouseDown = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        isMouseDown = false;
+    });
 }
 
 // ============================================================================

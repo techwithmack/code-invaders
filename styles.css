@@ -269,6 +269,14 @@ h1 {
     font-size: 1.1em;
 }
 
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: flex;
+}
+
 @media (max-width: 768px) {
     h1 {
         font-size: 2em;
@@ -286,5 +294,37 @@ h1 {
     
     #gameCanvas {
         height: 400px;
+        touch-action: none;
+        cursor: pointer;
+    }
+
+    .mobile-only {
+        display: flex;
+    }
+
+    .desktop-only {
+        display: none;
+    }
+
+    .container {
+        padding: 0;
+    }
+
+    .game-wrapper {
+        padding: 10px;
+    }
+
+    .stat-row {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .controls {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .control-group {
+        font-size: 0.8em;
     }
 }
