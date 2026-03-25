@@ -627,6 +627,13 @@ function setupEventListeners() {
         resetGame();
     });
 
+    // End game button handler
+    document.getElementById('endGameButton')!.addEventListener('click', () => {
+        if (state.status === GameStatus.Playing) {
+            gameOver('You ended the game early');
+        }
+    });
+
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             if (!document.getElementById('codeModal')!.classList.contains('hidden')) {

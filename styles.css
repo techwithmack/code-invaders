@@ -454,6 +454,36 @@ h1 {
     transform: scale(0.98);
 }
 
+.end-game-container {
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+}
+
+.end-game-button {
+    padding: 12px 30px;
+    background: rgba(255, 83, 112, 0.3);
+    border: 2px solid #ff5370;
+    color: #ff5370;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 15px rgba(255, 83, 112, 0.3);
+    font-family: 'Courier New', monospace;
+}
+
+.end-game-button:hover {
+    background: rgba(255, 83, 112, 0.5);
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255, 83, 112, 0.6);
+}
+
+.end-game-button:active {
+    transform: scale(0.98);
+}
+
 .mobile-only {
     display: none;
 }
