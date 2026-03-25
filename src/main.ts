@@ -6,10 +6,10 @@
 // CONFIGURATION & CONSTANTS
 // ============================================================================
 
-const CONFIG = {
+const BASE_CONFIG = {
     canvas: {
-        width: 1400,
-        height: 700,
+        desktop: { width: 1400, height: 700 },
+        mobile: { width: 800, height: 600 },
     },
     player: {
         width: 40,
@@ -23,18 +23,27 @@ const CONFIG = {
         speed: 400,
     },
     block: {
-        width: 560,
-        height: 110,
+        desktop: {
+            width: 560,
+            fontSize: 13,
+            lineHeight: 16,
+            padding: 12,
+            maxCharsPerLine: 80,
+        },
+        mobile: {
+            width: 240,
+            fontSize: 16,
+            lineHeight: 20,
+            padding: 12,
+            maxCharsPerLine: 35,
+        },
         initialSpeed: 40,
         speedIncrement: 3,
         maxSpeed: 150,
-        fontSize: 13,
-        lineHeight: 16,
-        padding: 12,
-        maxCharsPerLine: 80,
     },
     lanes: {
-        count: 5,
+        desktop: 5,
+        mobile: 3,
     },
     spawn: {
         initialInterval: 4.5,
@@ -59,6 +68,54 @@ const CONFIG = {
         insecureChance: 0.50,
     },
 };
+
+// Dynamic CONFIG that adapts to screen size
+let CONFIG = {
+    canvas: { width: 1400, height: 700 },
+    player: BASE_CONFIG.player,
+    bullet: BASE_CONFIG.bullet,
+    block: {
+        width: 560,
+        height: 110,
+        initialSpeed: 40,
+        speedIncrement: 3,
+        maxSpeed: 150,
+        fontSize: 13,
+        lineHeight: 16,
+        padding: 12,
+        maxCharsPerLine: 80,
+    },
+    lanes: { count: 5 },
+    spawn: BASE_CONFIG.spawn,
+    scoring: BASE_CONFIG.scoring,
+    difficulty: BASE_CONFIG.difficulty,
+};
+
+function isMobile(): boolean {
+    return window.innerWidth <= 768;
+}
+
+function updateConfigForScreenSize() {
+    const mobile = isMobile();
+    
+    if (mobile) {
+        CONFIG.canvas = BASE_CONFIG.canvas.mobile;
+        CONFIG.block.width = BASE_CONFIG.block.mobile.width;
+        CONFIG.block.fontSize = BASE_CONFIG.block.mobile.fontSize;
+        CONFIG.block.lineHeight = BASE_CONFIG.block.mobile.lineHeight;
+        CONFIG.block.padding = BASE_CONFIG.block.mobile.padding;
+        CONFIG.block.maxCharsPerLine = BASE_CONFIG.block.mobile.maxCharsPerLine;
+        CONFIG.lanes.count = BASE_CONFIG.lanes.mobile;
+    } else {
+        CONFIG.canvas = BASE_CONFIG.canvas.desktop;
+        CONFIG.block.width = BASE_CONFIG.block.desktop.width;
+        CONFIG.block.fontSize = BASE_CONFIG.block.desktop.fontSize;
+        CONFIG.block.lineHeight = BASE_CONFIG.block.desktop.lineHeight;
+        CONFIG.block.padding = BASE_CONFIG.block.desktop.padding;
+        CONFIG.block.maxCharsPerLine = BASE_CONFIG.block.desktop.maxCharsPerLine;
+        CONFIG.lanes.count = BASE_CONFIG.lanes.desktop;
+    }
+}
 
 // ============================================================================
 // CODE SNIPPETS - Loaded from code-invaders-trend-pack.json
@@ -311,6 +368,9 @@ async function loadSnippets(): Promise<void> {
 }
 
 async function init() {
+    // Update config based on screen size first
+    updateConfigForScreenSize();
+
     canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
     canvas.width = CONFIG.canvas.width;
     canvas.height = CONFIG.canvas.height;
@@ -319,7 +379,7 @@ async function init() {
     // Load player ship image
     playerShipImage = new Image();
     playerShipImage.src = 'assets/images/player-ship.png';
-    
+
     await new Promise<void>((resolve) => {
         if (playerShipImage!.complete) {
             resolve();
@@ -491,6 +551,25 @@ function setupEventListeners() {
 
     canvas.addEventListener('mouseleave', () => {
         isMouseDown = false;
+    });
+
+    // Handle window resize for responsive layout
+    let resizeTimeout: number;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = window.setTimeout(() => {
+            const wasMobile = CONFIG.canvas.width === BASE_CONFIG.canvas.mobile.width;
+            const nowMobile = isMobile();
+            
+            // Only reset if we switched between mobile/desktop
+            if (wasMobile !== nowMobile) {
+                updateConfigForScreenSize();
+                canvas.width = CONFIG.canvas.width;
+                canvas.height = CONFIG.canvas.height;
+                calculateLanePositions();
+                resetGame();
+            }
+        }, 250);
     });
 }
 
@@ -1090,12 +1169,14 @@ function drawBlocks() {
 
         // Draw language label HIGHER above the box
         ctx.save();
-        ctx.font = 'bold 14px "Courier New", monospace';
+        const labelFontSize = isMobile() ? 10 : 14;
+        const labelOffset = isMobile() ? -16 : -22;
+        ctx.font = `bold ${labelFontSize}px "Courier New", monospace`;
         ctx.fillStyle = '#00ffff';
         ctx.textAlign = 'center';
         ctx.shadowBlur = 5;
         ctx.shadowColor = '#00ffff';
-        ctx.fillText(block.language, x + block.width / 2, y - 22);
+        ctx.fillText(block.language, x + block.width / 2, y + labelOffset);
         ctx.restore();
 
         // ABSOLUTE CLIPPING - nothing can render outside this
